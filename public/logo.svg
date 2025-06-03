@@ -1,0 +1,26 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- White Background -->
+  <rect width="500" height="500" fill="white"/>
+
+  <!-- Blue Stripes (Top and Bottom) -->
+  <rect y="80" width="500" height="60" fill="#0038B8"/>
+  <rect y="360" width="500" height="60" fill="#0038B8"/>
+
+  <!-- Star of David -->
+  <g transform="translate(250,250) scale(4)">
+    <polygon points="0,-20 17.32,10 -17.32,10" fill="#0038B8"/>
+    <polygon points="0,20 -17.32,-10 17.32,-10" fill="#0038B8"/>
+  </g>
+
+  <!-- Red Circle -->
+  <circle cx="250" cy="250" r="200" stroke="red" stroke-width="30" fill="none"/>
+
+  <!-- Diagonal Red Banner -->
+  <rect x="-50" y="230" width="600" height="40" transform="rotate(-30 250 250)" fill="red"/>
+
+  <!-- BOYCOTT Text -->
+  <text x="250" y="265" font-size="60" font-family="Arial, sans-serif" font-weight="bold"
+        fill="white" text-anchor="middle" transform="rotate(-30 250 250)">
+    BOYCOTT
+  </text>
+</svg>
