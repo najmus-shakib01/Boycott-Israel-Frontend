@@ -52,7 +52,7 @@ const Visitor = () => {
     const lastVisit = localStorage.getItem(`lastVisit-${sessionId}`);
     const now = Date.now();
 
-    if (!lastVisit || now - parseInt(lastVisit) > 5 * 60 * 1000) {
+    if (!lastVisit || now - parseInt(lastVisit) > 30 * 60 * 1000) {
       mutation.mutate();
     }
 

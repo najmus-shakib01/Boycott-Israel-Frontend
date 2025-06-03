@@ -24,7 +24,7 @@ const Products = () => {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const [itemsPerPage] = useState(12);
 
-  const cacheDuration = 1000 * 60 * 5;
+  const cacheDuration = 1000 * 60 * 30;
 
   useEffect(() => {
     const params = {};
