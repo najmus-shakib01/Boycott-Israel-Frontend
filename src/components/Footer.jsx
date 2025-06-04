@@ -1,11 +1,3 @@
-import {
-  FaTwitter,
-  FaYoutube,
-  FaFacebook,
-  FaGithub,
-  FaInstagram,
-  FaLinkedin,
-} from "react-icons/fa";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
 const Footer = () => {
@@ -60,50 +52,6 @@ const Footer = () => {
                 <FaMapMarkerAlt /> BD, Sylhet, Habiganj
               </a>
             </li>
-             <div className="flex gap-3 pt-3">
-              <a
-                href="https://x.com/syed_shaki27278"
-                target="_blank"
-                className="text-blue-500 hover:text-blue-700 flex items-center justify-center"
-              >
-                <FaTwitter size={30} />
-              </a>
-              <a
-                href="https://www.youtube.com/@syednajmusshakib1833"
-                target="_blank"
-                className="text-red-500 hover:text-red-700 flex items-center justify-center"
-              >
-                <FaYoutube size={30} />
-              </a>
-              <a
-                href="https://www.facebook.com/syednazmusshakib.shakib"
-                target="_blank"
-                className="text-blue-700 hover:text-blue-900 flex items-center justify-center"
-              >
-                <FaFacebook size={30} />
-              </a>
-              <a
-                href="https://github.com/najmus-shakib01"
-                target="_blank"
-                className="text-gray-800 hover:text-gray-600 flex items-center justify-center"
-              >
-                <FaGithub size={30} />
-              </a>
-              <a
-                href="https://www.instagram.com/shakibosd/"
-                target="_blank"
-                className="text-pink-600 hover:text-pink-800 flex items-center justify-center"
-              >
-                <FaInstagram size={30} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/syed-nazmus-shakib-686985264/"
-                target="_blank"
-                className="text-blue-600 hover:text-blue-800 flex items-center justify-center"
-              >
-                <FaLinkedin size={30} />
-              </a>
-            </div>
           </ul>
         </section>
 
