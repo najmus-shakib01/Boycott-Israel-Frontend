@@ -5,15 +5,16 @@ import { toast } from "react-hot-toast";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
 import PageTitle from "../../utils/PageTitle";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const fetchVisitorCount = async () => {
-  const response = await axios.get(`${baseUrl}/websiteVisiotr/`);
+  const response = await axios.get(`${baseUrl}/visitor/`);
   return response.data;
 };
 
 const incrementVisitorCount = async () => {
-  const response = await axios.post(`${baseUrl}/websiteVisiotr/`);
+  const response = await axios.post(`${baseUrl}/visitor/`);
   return response.data;
 };
 
@@ -39,36 +40,33 @@ const Visitor = () => {
   });
 
   useEffect(() => {
-    const getSessionId = () => {
-      let sessionId = sessionStorage.getItem("visitSession");
-      if (!sessionId) {
-        sessionId = Date.now().toString();
-        sessionStorage.setItem("visitSession", sessionId);
+    const trackVisit = () => {
+      const sessionId =
+        sessionStorage.getItem("visitSession") || Date.now().toString();
+      sessionStorage.setItem("visitSession", sessionId);
+
+      const lastVisitKey = `lastVisit-${sessionId}`;
+      const lastVisit = localStorage.getItem(lastVisitKey);
+      const now = Date.now();
+      const thirtyMinutes = 30 * 60 * 1000;
+
+      if (!lastVisit || now - parseInt(lastVisit) > thirtyMinutes) {
+        mutation.mutate();
       }
-      return sessionId;
+
+      localStorage.setItem(lastVisitKey, now.toString());
     };
 
-    const sessionId = getSessionId();
-    const lastVisit = localStorage.getItem(`lastVisit-${sessionId}`);
-    const now = Date.now();
-
-    if (!lastVisit || now - parseInt(lastVisit) > 30 * 60 * 1000) {
-      mutation.mutate();
-    }
-
-    localStorage.setItem(`lastVisit-${sessionId}`, now.toString());
+    trackVisit();
   }, [mutation]);
 
-  const percentageIncrease = data?.count
-    ? Math.min(Math.floor(Math.log(data.count) * 10), 100)
-    : 1;
+  const calculatePercentage = () => {
+    if (!data?.count) return 1;
+    return Math.min(Math.floor(Math.log10(data.count) * 10), 100);
+  };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-10">
-        <Loader size="md" />
-      </div>
-    );
+    return <Loader />;
   }
 
   if (isError) {
@@ -77,13 +75,10 @@ const Visitor = () => {
 
   return (
     <div>
-      <PageTitle
-        key={"ওয়েবসাইট-মোট-কতজন-ভিজিট-করেছে-তার-কাউন্ট-দেখা"}
-        title={"ওয়েবসাইট-মোট-কতজন-ভিজিট-করেছে-তার-কাউন্ট-দেখা"}
-      />
+      <PageTitle title={"ওয়েবসাইট-মোট-কতজন-ভিজিট-করেছে-তার-কাউন্ট-দেখা"} />
       <section className="mt-28 md:mt-36 lg:mt-36 xl:mt-36 mb-12">
         <div className="max-w-2xl mx-auto px-4">
-          <div className="flex flex-col items-center text-center bg-gray-200 dark:bg-gray-800 p-20">
+          <div className="flex flex-col items-center text-center bg-gray-200 dark:bg-gray-800 p-20 rounded-lg shadow-lg">
             <div className="relative mb-4">
               <div className="text-5xl font-bold text-gray-900 dark:text-white">
                 {data?.count?.toLocaleString() || "0"}
@@ -101,10 +96,9 @@ const Visitor = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-                +{percentageIncrease}%
+                +{calculatePercentage()}%
               </div>
             </div>
-
             <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">
               Total Website Visitors
             </h3>
