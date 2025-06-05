@@ -38,23 +38,12 @@ const Visitor = () => {
       toast.error("Failed to update visitor count");
     },
   });
-
   useEffect(() => {
     const trackVisit = () => {
-      const sessionId =
-        sessionStorage.getItem("visitSession") || Date.now().toString();
-      sessionStorage.setItem("visitSession", sessionId);
-
-      const lastVisitKey = `lastVisit-${sessionId}`;
-      const lastVisit = localStorage.getItem(lastVisitKey);
-      const now = Date.now();
-      const thirtyMinutes = 30 * 60 * 1000;
-
-      if (!lastVisit || now - parseInt(lastVisit) > thirtyMinutes) {
+      if (!sessionStorage.getItem("visitSession")) {
         mutation.mutate();
+        sessionStorage.setItem("visitSession", Date.now().toString());
       }
-
-      localStorage.setItem(lastVisitKey, now.toString());
     };
 
     trackVisit();
@@ -75,7 +64,7 @@ const Visitor = () => {
 
   return (
     <div>
-      <PageTitle title={"ওয়েবসাইট-মোট-কতজন-ভিজিট-করেছে-তার-কাউন্ট-দেখা"} />
+      <PageTitle title={"ওয়েবসাইট-ভিজিট-কাউন্ট"} />
       <section className="mt-28 md:mt-36 lg:mt-36 xl:mt-36 mb-12">
         <div className="max-w-2xl mx-auto px-4">
           <div className="flex flex-col items-center text-center bg-gray-200 dark:bg-gray-800 p-20 rounded-lg shadow-lg">
