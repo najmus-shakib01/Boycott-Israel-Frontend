@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
@@ -16,32 +16,17 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState(
     searchParams.get("category") || "all"
   );
-  const [selectedCompany, setSelectedCompany] = useState(
-    searchParams.get("company") || "all"
-  );
   const navigate = useNavigate();
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const [itemsPerPage] = useState(12);
-
+  const itemsPerPage = 12;
   const cacheDuration = 1000 * 60 * 30;
-
-  useEffect(() => {
-    const params = {};
-    if (search) params.search = search;
-    if (selectedCategory !== "all") params.category = selectedCategory;
-    if (selectedCompany !== "all") params.company = selectedCompany;
-    if (currentPage > 1) params.page = currentPage;
-
-    setSearchParams(params, { replace: true });
-  }, [search, selectedCategory, selectedCompany, currentPage, setSearchParams]);
 
   const fetchProducts = async () => {
     try {
       const response = await axios.get(`${baseUrl}/products/list/`, {
         params: {
           category: selectedCategory === "all" ? null : selectedCategory,
-          company: selectedCompany === "all" ? null : selectedCompany,
           search: search || null,
           page: currentPage,
         },
@@ -63,31 +48,14 @@ const Products = () => {
     }
   };
 
-  const fetchCompanies = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/products/companies/`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching companies:", error);
-      return [];
-    }
-  };
-
   const {
-    data: productsData = { results: [], count: 0 },
+    data: productsData = { results: [], count: 0, total_pages: 1 },
     isLoading: productsLoading,
     isError: productsError,
   } = useQuery({
-    queryKey: [
-      "products",
-      selectedCategory,
-      selectedCompany,
-      search,
-      currentPage,
-    ],
+    queryKey: ["products", selectedCategory, search, currentPage],
     queryFn: fetchProducts,
     staleTime: cacheDuration,
-    keepPreviousData: true,
   });
 
   const {
@@ -100,28 +68,33 @@ const Products = () => {
     staleTime: cacheDuration,
   });
 
-  const { isLoading: companiesLoading, isError: companiesError } = useQuery({
-    queryKey: ["companies"],
-    queryFn: fetchCompanies,
-    staleTime: cacheDuration,
-  });
+  const handleCategoryChange = (categoryName) => {
+    const newParams = new URLSearchParams();
+    if (search) newParams.set("search", search);
+    if (categoryName !== "all") newParams.set("category", categoryName);
+
+    setSearchParams(newParams, { replace: true });
+    setSelectedCategory(categoryName);
+  };
 
   const handlePageChange = (page) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", page);
-    setSearchParams(params);
+    setSearchParams(params, { replace: true });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleResetFilters = () => {
     setSearch("");
     setSelectedCategory("all");
-    setSelectedCompany("all");
     setSearchParams({}, { replace: true });
   };
 
-  const isLoading = productsLoading || categoriesLoading || companiesLoading;
-  const isError = productsError || categoriesError || companiesError;
+  const isLoading = productsLoading || categoriesLoading;
+  const isError = productsError || categoriesError;
+
+  const totalPages = Math.max(1, Math.ceil(productsData.count / itemsPerPage));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
 
   return (
     <div className="mt-28 md:mt-36 lg:mt-36 xl:mt-36 mb-12 dark:bg-gray-900 transition-colors duration-300">
@@ -146,13 +119,7 @@ const Products = () => {
 
         <div className="flex flex-wrap gap-2 mb-4">
           <button
-            onClick={() => {
-              setSelectedCategory("all");
-              setSearchParams(
-                { ...Object.fromEntries(searchParams), category: "all" },
-                { replace: true }
-              );
-            }}
+            onClick={() => handleCategoryChange("all")}
             className={`px-3 py-1 rounded-full text-sm ${
               selectedCategory === "all"
                 ? "bg-blue-500 text-white"
@@ -164,13 +131,7 @@ const Products = () => {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => {
-                setSelectedCategory(category.name);
-                const params = new URLSearchParams(searchParams);
-                params.set("category", category.name);
-                params.delete("page");
-                setSearchParams(params);
-              }}
+              onClick={() => handleCategoryChange(category.name)}
               className={`px-3 py-1 rounded-full text-sm ${
                 selectedCategory === category.name
                   ? "bg-blue-500 text-white"
@@ -184,7 +145,8 @@ const Products = () => {
 
         <div className="mb-4 text-gray-600 dark:text-gray-400">
           মোট পণ্য: {productsData.count} | দেখানো হচ্ছে:{" "}
-          {productsData.results.length}
+          {productsData.results.length} | পৃষ্ঠা {safeCurrentPage} /{" "}
+          {totalPages}
         </div>
 
         {isLoading ? (
@@ -235,12 +197,14 @@ const Products = () => {
                   ))}
                 </div>
 
-                <Pagination
-                  totalItems={productsData.count}
-                  itemsPerPage={itemsPerPage}
-                  currentPage={currentPage}
-                  onPageChange={handlePageChange}
-                />
+                {totalPages > 1 && (
+                  <Pagination
+                    totalItems={productsData.count}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={safeCurrentPage}
+                    onPageChange={handlePageChange}
+                  />
+                )}
               </>
             )}
           </>
