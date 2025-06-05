@@ -5,8 +5,8 @@ import { toast } from "react-hot-toast";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
 import PageTitle from "../../utils/PageTitle";
-
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
 
 const fetchVisitorCount = async () => {
   const response = await axios.get(`${baseUrl}/visitor/`);
