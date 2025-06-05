@@ -5,7 +5,6 @@ import Home from "../pages/home/Home";
 import Products from "../pages/products/Products";
 import ProductsDetails from "../pages/products/ProductsDetails";
 import Review from "../pages/review/Review";
-import Visitor from "../pages/visitor/Visitor";
 
 const Routes = createBrowserRouter([
   {
@@ -31,11 +30,7 @@ const Routes = createBrowserRouter([
       {
         path: "আপনার-মতামত",
         element: <Review />,
-      },
-      {
-        path: "ওয়েবসাইট-ভিজিট-কাউন্ট",
-        element: <Visitor />,
-      },
+      }
     ],
   },
 ]);
