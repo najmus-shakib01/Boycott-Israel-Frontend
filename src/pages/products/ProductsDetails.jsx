@@ -96,12 +96,9 @@ const ProductsDetails = () => {
             <h1 className="text-2xl text-center md:text-3xl font-bold mb-2">
               {companyName}
             </h1>
-            <h1 className="text-xl md:text-xl font-bold text-gray-800 dark:text-white mb-2">
-              {product.name || "No product name"}
-            </h1>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              Category:
+              Category :
               <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">
                 {getCategoryName()}
               </span>
@@ -109,17 +106,17 @@ const ProductsDetails = () => {
 
             <div className="prose dark:prose-invert max-w-none">
               <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                Description:
+                Description :
               </h3>
               <p className="text-gray-600 dark:text-gray-300 mb-2 text-justify">
                 {product.description || "No description available"}
               </p>
               <h4 className="text-md font-bold text-gray-700 dark:text-gray-300 mb-2">
-                Owned by: {product.owned_by || "Unknown"}
+                Owned by : {product.owned_by || "Unknown"}
               </h4>
               <div>
                 <h4 className="text-gray-500 mt-5 dark:text-gray-500 text-sm">
-                  যোগের তারিখ: {Time(product.created_at)}
+                  যোগের তারিখ : {Time(product.created_at)}
                 </h4>
               </div>
             </div>
