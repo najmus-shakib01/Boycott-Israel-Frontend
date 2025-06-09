@@ -21,8 +21,8 @@ const Video = () => {
   const [currentPage, setCurrentPage] = useState(() => {
     const urlPage = searchParams.get("page");
     return urlPage
-      ? parseInt(urlPage, 10)
-      : parseInt(localStorage.getItem("videoPage") || "1", 10);
+      ? parseInt(urlPage, 20)
+      : parseInt(localStorage.getItem("videoPage") || "1", 20);
   });
 
   const {

@@ -93,7 +93,7 @@ const ProductsDetails = () => {
                 />
               </div>
             )}
-            <h1 className="text-2xl text-center md:text-3xl font-bold mb-2">
+            <h1 className="text-xl text-center md:text-xl font-bold mb-2">
               {companyName}
             </h1>
 

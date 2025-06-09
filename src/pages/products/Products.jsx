@@ -19,7 +19,7 @@ const Products = () => {
   const navigate = useNavigate();
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-  const itemsPerPage = 12;
+  const itemsPerPage = 20;
   const cacheDuration = 1000 * 60 * 30;
 
   const fetchProducts = async () => {
@@ -217,7 +217,7 @@ const Products = () => {
                       </div>
 
                       <div className="p-4 text-center">
-                        <h2 className="text-md font-bold md:text-xl lg:text-2xl dark:text-white mb-2">
+                        <h2 className="text-sm font-bold md:text-xl lg:text-lg dark:text-white mb-2">
                           {product.company?.name || product.company}
                         </h2>
                         <button
