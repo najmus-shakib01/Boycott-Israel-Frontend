@@ -48,6 +48,20 @@ const Products = () => {
     }
   };
 
+  const fetchCompanies = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/products/companies/`, {
+        params: {
+          search: search || null,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+      return [];
+    }
+  };
+
   const {
     data: productsData = { results: [], count: 0, total_pages: 1 },
     isLoading: productsLoading,
@@ -66,6 +80,16 @@ const Products = () => {
     queryKey: ["categories"],
     queryFn: fetchCategories,
     staleTime: cacheDuration,
+  });
+
+  const {
+    isLoading: companiesLoading,
+    isError: companiesError,
+  } = useQuery({
+    queryKey: ["companies", search],
+    queryFn: fetchCompanies,
+    staleTime: cacheDuration,
+    enabled: !!search, 
   });
 
   const handleCategoryChange = (categoryName) => {
@@ -90,8 +114,21 @@ const Products = () => {
     setSearchParams({}, { replace: true });
   };
 
-  const isLoading = productsLoading || categoriesLoading;
-  const isError = productsError || categoriesError;
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearch(value);
+
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set("search", value);
+    } else {
+      newParams.delete("search");
+    }
+    setSearchParams(newParams, { replace: true });
+  };
+
+  const isLoading = productsLoading || categoriesLoading || companiesLoading;
+  const isError = productsError || categoriesError || companiesError;
 
   const totalPages = Math.max(1, Math.ceil(productsData.count / itemsPerPage));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -109,10 +146,11 @@ const Products = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <input
               type="text"
-              placeholder="পন্য সার্চ করুন..."
+              placeholder="কোম্পানির প্রথম অক্ষর লিখুন (যেমন: A, a)"
               className="px-4 py-2 border rounded-md dark:bg-gray-800 dark:text-white flex-grow"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
+              maxLength={1} 
             />
           </div>
         </div>
@@ -144,7 +182,7 @@ const Products = () => {
         </div>
 
         <div className="mb-4 text-gray-600 dark:text-gray-400">
-          মোট পণ্য: {productsData.count} | দেখানো হচ্ছে:{" "}
+          মোট পণ্য : {productsData.count} | দেখানো হচ্ছে : {" "}
           {productsData.results.length} | পৃষ্ঠা {safeCurrentPage} /{" "}
           {totalPages}
         </div>
