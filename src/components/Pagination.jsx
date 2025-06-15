@@ -1,20 +1,31 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 
 const Pagination = ({ 
   totalItems, 
   itemsPerPage = 20, 
-  currentPage, 
+  currentPage: initialPage, 
   onPageChange 
 }) => {
+  const queryClient = useQueryClient();
+
+  const { data: currentPage } = useQuery({
+    queryKey: ['pagination', 'currentPage'],
+    initialData: initialPage,
+    staleTime: 30 * 60 * 1000,
+  });
+
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 
   const handlePrevious = () => {
     const newPage = Math.max(currentPage - 1, 1);
+    queryClient.setQueryData(['pagination', 'currentPage'], newPage);
     onPageChange(newPage);
   };
 
   const handleNext = () => {
     const newPage = Math.min(currentPage + 1, totalPages);
+    queryClient.setQueryData(['pagination', 'currentPage'], newPage);
     onPageChange(newPage);
   };
 

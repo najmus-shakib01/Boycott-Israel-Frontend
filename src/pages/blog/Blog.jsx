@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageTitle from "../../utils/PageTitle";
 import Photo from "./Photo";
@@ -6,9 +7,16 @@ import Video from "./Video";
 
 const Blog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState(() => {
-    return searchParams.get("tab") || "photos";
+  const queryClient = useQueryClient();
+
+  const { data: activeTab } = useQuery({
+    queryKey: ['activeTab'],
+    initialData: searchParams.get("tab") || "photos",
   });
+
+  const setActiveTab = (tab) => {
+    queryClient.setQueryData(['activeTab'], tab);
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);

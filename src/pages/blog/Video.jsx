@@ -96,7 +96,7 @@ const Video = () => {
 
       <Pagination
         totalItems={videoData?.count || 0}
-        itemsPerPage={12}
+        itemsPerPage={20}
         currentPage={currentPage}
         onPageChange={handlePageChange}
         storageKey="videoPage"

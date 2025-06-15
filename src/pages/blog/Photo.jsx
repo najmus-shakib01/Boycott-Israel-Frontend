@@ -92,7 +92,7 @@ const Photo = () => {
       </div>
       <Pagination
         totalItems={photoData?.count || 0}
-        itemsPerPage={12}
+        itemsPerPage={20}
         currentPage={currentPage}
         onPageChange={handlePageChange}
         storageKey="photoPage"
