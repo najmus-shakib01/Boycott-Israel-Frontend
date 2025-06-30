@@ -41,6 +41,9 @@ const Products = () => {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${baseUrl}/products/categories/`);
+      if (response.data.results) {
+        return response.data.results;
+      }
       return response.data;
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -73,7 +76,7 @@ const Products = () => {
   });
 
   const {
-    data: categories = [],
+    data: categoriesData = { results: [] },
     isLoading: categoriesLoading,
     isError: categoriesError,
   } = useQuery({
@@ -82,14 +85,17 @@ const Products = () => {
     staleTime: cacheDuration,
   });
 
-  const {
-    isLoading: companiesLoading,
-    isError: companiesError,
-  } = useQuery({
+  const categories = Array.isArray(categoriesData.results)
+    ? categoriesData.results
+    : Array.isArray(categoriesData)
+    ? categoriesData
+    : [];
+
+  const { isLoading: companiesLoading, isError: companiesError } = useQuery({
     queryKey: ["companies", search],
     queryFn: fetchCompanies,
     staleTime: cacheDuration,
-    enabled: !!search, 
+    enabled: !!search,
   });
 
   const handleCategoryChange = (categoryName) => {
@@ -114,18 +120,6 @@ const Products = () => {
     setSearchParams({}, { replace: true });
   };
 
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearch(value);
-
-    const newParams = new URLSearchParams(searchParams);
-    if (value) {
-      newParams.set("search", value);
-    } else {
-      newParams.delete("search");
-    }
-    setSearchParams(newParams, { replace: true });
-  };
 
   const isLoading = productsLoading || categoriesLoading || companiesLoading;
   const isError = productsError || categoriesError || companiesError;
@@ -142,17 +136,6 @@ const Products = () => {
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             ইসরায়েলের পণ্যসমূহ
           </h1>
-
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <input
-              type="text"
-              placeholder="কোম্পানির প্রথম অক্ষর লিখুন (যেমন: A, a)"
-              className="px-4 py-2 border rounded-md dark:bg-gray-800 dark:text-white flex-grow"
-              value={search}
-              onChange={handleSearchChange}
-              maxLength={1} 
-            />
-          </div>
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -182,7 +165,7 @@ const Products = () => {
         </div>
 
         <div className="mb-4 text-gray-600 dark:text-gray-400">
-          মোট পণ্য : {productsData.count} | দেখানো হচ্ছে : {" "}
+          মোট পণ্য : {productsData.count} | দেখানো হচ্ছে :{" "}
           {productsData.results.length} | পৃষ্ঠা {safeCurrentPage} /{" "}
           {totalPages}
         </div>
@@ -209,9 +192,6 @@ const Products = () => {
                             src={product.company.logo}
                             alt={product.company.name}
                             className="w-96 h-32 mx-auto block object-contain"
-                            onError={(e) => {
-                              e.target.src = "https://via.placeholder.com/150";
-                            }}
                           />
                         )}
                       </div>

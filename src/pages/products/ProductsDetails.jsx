@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import Boycott from "../../components/Boycott";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
+import NoProductFound from "../../components/NoDataFound";
 import Time from "../../utils/formateData";
 import PageTitle from "../../utils/PageTitle";
-import NoProductFound from "../../components/NoDataFound";
-import Boycott from "../../components/Boycott";
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ProductsDetails = () => {
@@ -23,14 +24,21 @@ const ProductsDetails = () => {
       const response = await axios.get(`${baseUrl}/products/list/${id}/`);
       return response.data;
     },
-    staleTime: 1000 * 60 * 30
+    staleTime: 1000 * 60 * 30,
   });
 
-  const { data: companies } = useQuery({
+  const { data: companies = [] } = useQuery({
     queryKey: ["companies"],
     queryFn: async () => {
       const response = await axios.get(`${baseUrl}/products/companies/`);
-      return response.data;
+
+      if (Array.isArray(response.data)) {
+        return response.data;
+      } else if (Array.isArray(response.data.results)) {
+        return response.data.results;
+      } else {
+        return [];
+      }
     },
     enabled: !!product,
   });
@@ -38,25 +46,28 @@ const ProductsDetails = () => {
   const getCompanyInfo = () => {
     if (!product?.company) return { name: "Unknown", logo: null };
 
-    if (typeof product.company === "string") {
-      const foundCompany = companies?.find((c) => c.name === product.company);
-      return {
-        name: product.company,
-        logo: foundCompany?.logo || null,
-      };
-    }
+    const companiesArray = Array.isArray(companies) ? companies : [];
 
-    if (product.company?.name) {
-      const foundCompany = companies?.find(
+    let foundCompany;
+
+    if (typeof product.company === "string") {
+      foundCompany = companiesArray.find((c) => c.name === product.company);
+    } else {
+      foundCompany = companiesArray.find(
         (c) => c.id === product.company.id || c.name === product.company.name
       );
-      return {
-        name: product.company.name,
-        logo: foundCompany?.logo || null,
-      };
     }
 
-    return { name: "Unknown", logo: null };
+    const rawLogo = foundCompany?.logo || product.company?.logo || "";
+
+    const logoUrl = rawLogo.startsWith("http")
+      ? rawLogo
+      : `${baseUrl.replace(/\/$/, "")}/${rawLogo.replace(/^\//, "")}`;
+
+    return {
+      name: foundCompany?.name || product.company?.name || "Unknown",
+      logo: logoUrl,
+    };
   };
 
   const { name: companyName, logo: companyLogo } = getCompanyInfo();
@@ -86,13 +97,10 @@ const ProductsDetails = () => {
                   src={companyLogo}
                   alt={companyName}
                   className="h-48 w-96 object-contain"
-                  onError={(e) => {
-                    e.target.src =
-                      "https://via.placeholder.com/384x192?text=No+Logo";
-                  }}
                 />
               </div>
             )}
+
             <h1 className="text-xl text-center md:text-xl font-bold mb-2">
               {companyName}
             </h1>
