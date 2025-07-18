@@ -1,13 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import { FiMail, FiMessageSquare, FiUser } from "react-icons/fi";
 import PageTitle from "../../utils/PageTitle";
 
 const Review = () => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const accessKey = import.meta.env.VITE_EMAIL_VALIDATION_KEY;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,18 +21,6 @@ const Review = () => {
     }));
   };
 
-  const validateEmail = async (email) => {
-    try {
-      const response = await axios.get(
-        `https://apilayer.net/api/check?access_key=${accessKey}&email=${email}`
-      );
-      return response.data.format_valid && response.data.smtp_check;
-    } catch (error) {
-      console.error("Email validation failed:", error);
-      return false;
-    }
-  };
-
   const submitContactForm = async (formData) => {
     const response = await axios.post(`${baseUrl}/contact/`, formData);
     return response.data;
@@ -45,11 +32,6 @@ const Review = () => {
         throw new Error("ইমেইল ফিল্ডটি পূরণ করুন");
       }
 
-      const isEmailValid = await validateEmail(formData.email);
-      if (!isEmailValid) {
-        throw new Error("দুঃখিত, আপনি একটি বৈধ ইমেইল প্রদান করেননি");
-      }
-
       return await submitContactForm(formData);
     },
     onSuccess: () => {
@@ -57,7 +39,9 @@ const Review = () => {
       setFormData({ name: "", email: "", message: "" });
     },
     onError: (error) => {
-      toast.error(error.message || "বার্তা পাঠাতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।");
+      toast.error(
+        error.message || "বার্তা পাঠাতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।"
+      );
     },
   });
 
