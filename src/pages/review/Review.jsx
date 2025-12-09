@@ -7,6 +7,7 @@ import PageTitle from "../../utils/PageTitle";
 
 const Review = () => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,22 +16,22 @@ const Review = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const submitContactForm = async (formData) => {
+  const submitContactForm = async () => {
     const response = await axios.post(`${baseUrl}/contact/`, formData);
     return response.data;
   };
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      if (!formData.email) {
+      if (!formData.email)
         throw new Error("ইমেইল ফিল্ডটি পূরণ করুন");
-      }
 
       return await submitContactForm(formData);
     },
@@ -39,9 +40,7 @@ const Review = () => {
       setFormData({ name: "", email: "", message: "" });
     },
     onError: (error) => {
-      toast.error(
-        error.message || "বার্তা পাঠাতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।"
-      );
+      toast.error(error.message || "বার্তা পাঠাতে সমস্যা হয়েছে।");
     },
   });
 
@@ -51,81 +50,116 @@ const Review = () => {
   };
 
   return (
-    <div>
-      <PageTitle key={"আপনার মতামত"} title={"আপনার মতামত"} />
-      <section className="mt-28 md:mt-36 lg:mt-36 xl:mt-36 mb-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="pt-28 md:pt-32 pb-16 min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
+      <PageTitle title="আপনার মতামত" />
+
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* Heading */}
         <div className="text-center">
-          <h1 className="text-3xl font-bold">
-            এই ওয়েবসাইট সম্পর্কে আপনার মতামত জানান
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+            আপনার মতামত জানান
           </h1>
-          <p className="mt-5 font-semibold text-center text-gray-700 dark:text-gray-300">
-            আপনি যদি মনে করেন এই ওয়েবসাইটে আরও কিছু ফিচার যুক্ত করা উচিত, তাহলে
-            দয়া করে আমাদের জানান। নতুন কোনো তথ্য, ছবি বা ভিডিও থাকলে তাও আমাদের
-            সাথে শেয়ার করতে পারেন। আপনার মূল্যবান মতামত আমাদের ভবিষ্যৎ উন্নয়নের
-            জন্য খুবই গুরুত্বপূর্ণ।
+
+          <p className="mt-5 text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
+            আমাদের ওয়েবসাইটের উন্নয়নে আপনার মতামত অত্যন্ত মূল্যবান।  
+            আপনার প্রস্তাবনা, উন্নয়ন আইডিয়া অথবা নতুন তথ্য/ভিডিও শেয়ার করতে পারেন।
           </p>
         </div>
 
-        <div className="bg-white mt-5 dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 transition-all duration-300">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            আপনার বার্তা পাঠান
+        {/* FORM CARD */}
+        <div
+          className="
+            mt-10 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl 
+            p-8 md:p-10 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 
+            transition-all
+          "
+        >
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
+            বার্তা পাঠান
           </h3>
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FiUser className="text-gray-500 dark:text-gray-400 transition-colors" />
-              </div>
+          <form className="space-y-7" onSubmit={handleSubmit}>
+
+            {/* NAME FIELD */}
+            <div className="relative">
+              <FiUser className="absolute left-4 top-4 text-gray-400 dark:text-gray-500" />
+
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="আপনার নাম"
-                className="w-full pl-12 pr-4 py-3 bg-transparent border-b-2 focus:outline-none text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 required
+                className="
+                  w-full pl-12 pr-4 py-4 rounded-xl
+                  bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                  border border-gray-300 dark:border-gray-600
+                  focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+                  transition-all duration-200
+                "
+                placeholder="আপনার নাম"
               />
             </div>
 
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <FiMail className="text-gray-500 dark:text-gray-400 transition-colors" />
-              </div>
+            {/* EMAIL FIELD */}
+            <div className="relative">
+              <FiMail className="absolute left-4 top-4 text-gray-400 dark:text-gray-500" />
+
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="আপনার ই-মেইল"
-                className="w-full pl-12 pr-4 py-3 bg-transparent border-b-2 focus:outline-none text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 required
+                className="
+                  w-full pl-12 pr-4 py-4 rounded-xl
+                  bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                  border border-gray-300 dark:border-gray-600
+                  focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+                  transition-all duration-200
+                "
+                placeholder="আপনার ই-মেইল"
               />
             </div>
 
-            <div className="relative group">
-              <div className="absolute top-4 left-4">
-                <FiMessageSquare className="text-gray-500 dark:text-gray-400 transition-colors" />
-              </div>
+            {/* MESSAGE FIELD */}
+            <div className="relative">
+              <FiMessageSquare className="absolute left-4 top-4 text-gray-400 dark:text-gray-500" />
+
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                rows="4"
-                placeholder="আপনার বার্তা লিখুন..."
-                className="w-full pl-12 pr-4 py-3 bg-transparent border-b-2 focus:outline-none text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 resize-none"
+                rows="5"
                 required
-              />
+                className="
+                  w-full pl-12 pr-4 py-4 rounded-xl resize-none
+                  bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                  border border-gray-300 dark:border-gray-600
+                  focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+                  transition-all duration-200
+                "
+                placeholder="আপনার বার্তা লিখুন..."
+              ></textarea>
             </div>
 
+            {/* SUBMIT BUTTON */}
             <button
               type="submit"
               disabled={isPending}
-              className={`bg-gray-400 text-black p-3 dark:bg-gray-200 rounded-lg dark:text-black hover:bg-gray-500 transition ${
-                isPending ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`
+                w-full py-4 rounded-xl text-lg font-semibold transition-all
+                ${
+                  isPending
+                    ? "bg-emerald-400 cursor-not-allowed opacity-70"
+                    : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-md hover:shadow-lg"
+                }
+              `}
             >
               {isPending ? "পাঠানো হচ্ছে..." : "বার্তা পাঠান"}
             </button>
+
           </form>
         </div>
       </section>

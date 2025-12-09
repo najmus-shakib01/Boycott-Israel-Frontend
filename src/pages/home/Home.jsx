@@ -6,16 +6,17 @@ import WhatIsBoycott from "./WhatIsBoycott";
 
 const Home = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
       <PageTitle key={"বয়কট-ইসরায়েল"} title={"বয়কট-ইসরায়েল"} />
-      <section className="mt-28 md:mt-36 lg:mt-36 xl:mt-36 mb-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <main className="pt-28 md:pt-32 lg:pt-36 pb-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 md:space-y-16">
           <Boycott />
+          <WhatIsBoycott />
+          <HowIdentifyProducts />
+          <PalestineHistory />
         </div>
-        <WhatIsBoycott />
-        <HowIdentifyProducts />
-        <PalestineHistory />
-      </section>
+      </main>
     </div>
   );
 };

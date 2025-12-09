@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
 import ErrorMessage from "../../components/Error";
 import LoadingSpinner from "../../components/Loader";
 import Pagination from "../../components/Pagination";
@@ -21,8 +21,8 @@ const Video = () => {
   const [currentPage, setCurrentPage] = useState(() => {
     const urlPage = searchParams.get("page");
     return urlPage
-      ? parseInt(urlPage, 20)
-      : parseInt(localStorage.getItem("videoPage") || "1", 20);
+      ? parseInt(urlPage)
+      : parseInt(localStorage.getItem("videoPage") || "1");
   });
 
   const {
@@ -34,12 +34,6 @@ const Video = () => {
     queryFn: () => fetchBlobVideos(currentPage),
     staleTime: 30 * 60 * 1000,
   });
-
-  const handleCloseModal = (e) => {
-    if (e.target === e.currentTarget || e.key === "Escape") {
-      setSelectedVideo(null);
-    }
-  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -53,24 +47,25 @@ const Video = () => {
   useEffect(() => {
     const pageFromUrl = searchParams.get("page");
     if (pageFromUrl) {
-      setCurrentPage(parseInt(pageFromUrl, 10));
+      setCurrentPage(parseInt(pageFromUrl));
       localStorage.setItem("videoPage", pageFromUrl);
     }
   }, [searchParams]);
 
   if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorMessage message="Failed to load videos" />;
+  if (isError) return <ErrorMessage />;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-white">
-        Videos
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+        গাজার ভিডিও
       </h2>
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
         {videoData?.results?.map((video) => (
           <div
             key={video.id}
-            className="rounded-lg overflow-hidden shadow-lg bg-white dark:bg-gray-800 relative group cursor-pointer"
+            className="rounded-xl overflow-hidden shadow bg-white dark:bg-gray-800 cursor-pointer hover:shadow-lg transition"
             onClick={() => setSelectedVideo(video)}
           >
             <div className="relative pt-[56.25%]">
@@ -78,16 +73,17 @@ const Video = () => {
                 className="absolute top-0 left-0 w-full h-full"
                 src={video.video}
                 title={video.videoTitle}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             </div>
+
             <div className="p-4">
-              <p className="whitespace-pre-line break-words text-justify text-gray-700 dark:text-gray-200 leading-relaxed mb-4">
+              <p className="text-gray-700 dark:text-gray-300 text-justify">
                 {video.videoTitle}
               </p>
-              <p className="text-gray-500 mt-5 dark:text-gray-500 text-sm">
-                যোগের তারিখ : {Time(video.created_at)}
+
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                যোগের তারিখ: {Time(video.created_at)}
               </p>
             </div>
           </div>
@@ -99,31 +95,29 @@ const Video = () => {
         itemsPerPage={20}
         currentPage={currentPage}
         onPageChange={handlePageChange}
-        storageKey="videoPage"
       />
 
       {selectedVideo && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
-          onClick={handleCloseModal}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={(e) =>
+            e.target === e.currentTarget && setSelectedVideo(null)
+          }
         >
-          <div className="relative w-full h-full max-w-6xl max-h-[90vh]">
+          <div className="relative max-w-5xl w-full max-h-[90vh]">
             <button
               onClick={() => setSelectedVideo(null)}
-              className="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 z-10 p-2"
-              aria-label="Close video"
+              className="absolute -top-10 right-0 text-white text-2xl"
             >
               <FaTimes />
             </button>
-            <div className="relative w-full h-full">
-              <iframe
-                className="w-full h-full"
-                src={selectedVideo.video}
-                title={selectedVideo.videoTitle}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+
+            <iframe
+              className="w-full h-[80vh] rounded-xl shadow-xl"
+              src={selectedVideo.video}
+              title={selectedVideo.videoTitle}
+              allowFullScreen
+            />
           </div>
         </div>
       )}

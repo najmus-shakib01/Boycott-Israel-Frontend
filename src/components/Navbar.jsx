@@ -1,4 +1,4 @@
-import { Home, ImagePlay, Moon, ShoppingCart, Star, Sun } from "lucide-react";
+import { Home, ImagePlay, Menu, Moon, ShoppingCart, Star, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import NavLogo from "/logo.png";
@@ -12,14 +12,14 @@ const Navbar = () => {
     );
   });
 
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+  const toggleDarkMode = () => setDarkMode(!darkMode);
 
   const navItems = [
     { label: "বয়কট-ইসরায়েল", path: "/", icon: Home },
@@ -31,61 +31,112 @@ const Navbar = () => {
   return (
     <header className="fixed top-0 w-full z-50 bg-white dark:bg-gray-800 shadow-md transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-5">
-        <div className="flex items-center justify-between ">
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between">
+
+          {/* Logo */}
+          <div className="flex items-center gap-2">
             <img
               src={NavLogo}
               alt="Logo"
               className="w-10 h-10 md:w-16 md:h-16 rounded-full shadow border border-gray-300 dark:border-gray-700"
             />
           </div>
-          <nav className="flex items-center gap-1 md:gap-6">
+
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={({ isActive }) => `
-                  p-2 rounded-full transition-all
+                className={({ isActive }) =>
+                  `flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition
                   ${
                     isActive
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300"
-                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }
-                  group relative
-                `}
+                      ? "bg-emerald-600 text-white shadow"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  }`
+                }
               >
-                <item.icon className="w-5 h-5 md:w-6 md:h-6" />
-                <span
-                  className="
-                  hidden lg:block
-                  absolute top-full left-1/2 -translate-x-1/2 mt-2
-                  px-2 py-1 text-xs whitespace-nowrap
-                  bg-gray-800 text-white dark:bg-gray-200 dark:text-black
-                  rounded opacity-0 group-hover:opacity-100 transition-opacity
-                  pointer-events-none
-                "
-                >
-                  {item.label}
-                </span>
+                <item.icon size={18} />
+                {item.label}
               </NavLink>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          {/* Dark Mode + Hamburger */}
+          <div className="flex items-center gap-3">
+
+            {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full bg-blue-600 dark:bg-blue-400 text-white dark:text-black"
-              aria-label="Toggle dark mode"
+              className="p-2 rounded-full bg-emerald-600 dark:bg-emerald-400 text-white dark:text-black"
             >
-              {darkMode ? (
-                <Sun size={16} className="md:w-5" />
-              ) : (
-                <Moon size={16} className="md:w-5" />
-              )}
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="md:hidden p-2 rounded-lg bg-gray-200 dark:bg-gray-700"
+            >
+              <Menu size={22} className="text-gray-800 dark:text-gray-200" />
             </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Right Drawer */}
+      {mobileOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setMobileOpen(false)}>
+          <div
+            className="absolute right-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-xl p-5 flex flex-col gap-6 transform transition-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700"
+              >
+                <X size={22} className="text-gray-800 dark:text-gray-200" />
+              </button>
+            </div>
+
+            {/* Drawer Menu Items */}
+            <nav className="flex flex-col gap-4">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-4 py-3 rounded-lg text-base transition
+                    ${
+                      isActive
+                        ? "bg-emerald-600 text-white shadow"
+                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    }`
+                  }
+                >
+                  <item.icon size={20} />
+                  {item.label}
+                </NavLink>
+              ))}
+            </nav>
+
+            {/* Dark Mode Switch Inside Drawer */}
+            <div className="mt-auto pt-4 border-t border-gray-300 dark:border-gray-700">
+              <button
+                onClick={toggleDarkMode}
+                className="w-full flex items-center justify-center gap-2 bg-emerald-600 dark:bg-emerald-400 text-white dark:text-black py-3 rounded-lg"
+              >
+                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+                {darkMode ? "লাইট মোড" : "ডার্ক মোড"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
