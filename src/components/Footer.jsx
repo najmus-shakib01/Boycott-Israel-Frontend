@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
 const Footer = () => {
 
@@ -29,7 +28,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* GRID SECTIONS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-28 mb-10">
 
             {/* ABOUT */}
             <section>
@@ -49,32 +48,7 @@ const Footer = () => {
                 🇵🇸 প্যালেস্টাইনের পক্ষে দাঁড়ান, অন্যায়ের বিরুদ্ধে আওয়াজ তুলুন।
               </p>
             </section>
-
-            {/* CONTACT */}
-            <section>
-              <h3 className="font-bold text-xl mb-3">📞 যোগাযোগ</h3>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-2">
-                  <FaPhoneAlt /> +8801401997130
-                </li>
-
-                <li className="flex items-center gap-2">
-                  <FaEnvelope /> syednazmusshakib94@gmail.com
-                </li>
-
-                <li>
-                  <a
-                    href="https://www.google.com/maps/@24.2693741,91.4762642,51m/data=!3m1!1e3"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline flex items-center gap-2"
-                  >
-                    <FaMapMarkerAlt /> BD, Sylhet, Habiganj
-                  </a>
-                </li>
-              </ul>
-            </section>
-
+          
             {/* LEGAL */}
             <section>
               <h3 className="font-bold text-xl mb-3">⚖️ লিগ্যাল</h3>
