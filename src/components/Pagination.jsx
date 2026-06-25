@@ -16,15 +16,32 @@ const Pagination = ({
 
   const getVisiblePages = () => {
     const pages = [];
+    const delta = 2; // pages to show around current
 
-    const staticPages = [1, 2, 3];
+    // Always show page 1
+    pages.push(1);
 
-    staticPages.forEach((p) => {
-      if (p <= totalPages) pages.push(p);
-    });
+    // Calculate range around current page
+    const rangeStart = Math.max(2, currentPage - delta);
+    const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
 
-    if (totalPages > 3) {
-      pages.push("dots");
+    // Add dots before range if needed
+    if (rangeStart > 2) {
+      pages.push("dots-start");
+    }
+
+    // Add range pages
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    // Add dots after range if needed
+    if (rangeEnd < totalPages - 1) {
+      pages.push("dots-end");
+    }
+
+    // Always show last page (if more than 1 page)
+    if (totalPages > 1) {
       pages.push(totalPages);
     }
 
@@ -34,7 +51,7 @@ const Pagination = ({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="flex justify-center items-center mt-10 gap-2 text-sm">
+    <div className="flex justify-center items-center mt-10 gap-1.5 text-sm">
       <button
         onClick={() => handleChange(currentPage - 1)}
         disabled={currentPage === 1}
@@ -50,10 +67,10 @@ const Pagination = ({
 
       <div className="flex items-center gap-1">
         {visiblePages.map((item, index) => {
-          if (item === "dots") {
+          if (typeof item === "string" && item.startsWith("dots")) {
             return (
               <span
-                key={`dots-${index}`}
+                key={`${item}-${index}`}
                 className="w-9 h-9 flex items-center justify-center text-xs text-gray-400"
               >
                 ...

@@ -1,13 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { FiMail, FiMessageSquare, FiUser } from "react-icons/fi";
+import axiosClient from "../../configs/axios.config";
 import PageTitle from "../../utils/PageTitle";
 
 const Review = () => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -23,24 +21,24 @@ const Review = () => {
     }));
   };
 
-  const submitContactForm = async () => {
-    const response = await axios.post(`${baseUrl}/contact/`, formData);
-    return response.data;
-  };
-
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
       if (!formData.email)
         throw new Error("ইমেইল ফিল্ডটি পূরণ করুন");
 
-      return await submitContactForm(formData);
+      const response = await axiosClient.post("/contact/", formData);
+      return response.data;
     },
     onSuccess: () => {
-      toast.success("আপনার বার্তা সফলভাবে পাঠানো হয়েছে!");
+      toast.success("আপনার বার্তা সফলভাবে পাঠানো হয়েছে!");
       setFormData({ name: "", email: "", message: "" });
     },
     onError: (error) => {
-      toast.error(error.message || "বার্তা পাঠাতে সমস্যা হয়েছে।");
+      const message =
+        error.response?.status === 429
+          ? "আপনি অনেক বেশি বার্তা পাঠিয়েছেন। কিছুক্ষণ পর আবার চেষ্টা করুন।"
+          : error.message || "বার্তা পাঠাতে সমস্যা হয়েছে।";
+      toast.error(message);
     },
   });
 
@@ -62,7 +60,7 @@ const Review = () => {
           </h1>
 
           <p className="mt-5 text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-            আমাদের ওয়েবসাইটের উন্নয়নে আপনার মতামত অত্যন্ত মূল্যবান।  
+            আমাদের ওয়েবসাইটের উন্নয়নে আপনার মতামত অত্যন্ত মূল্যবান।  
             আপনার প্রস্তাবনা, উন্নয়ন আইডিয়া অথবা নতুন তথ্য/ভিডিও শেয়ার করতে পারেন।
           </p>
         </div>

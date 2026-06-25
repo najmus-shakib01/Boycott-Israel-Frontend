@@ -1,19 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
+import axiosClient from "../../configs/axios.config";
 import ErrorMessage from "../../components/Error";
 import LoadingSpinner from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import Time from "../../utils/formateData";
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-const fetchBlobPhotos = async (page = 1) => {
-  const response = await axios.get(`${baseUrl}/blob/blob-photo/?page=${page}`);
-  return response.data;
-};
 
 const Photo = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,14 +18,18 @@ const Photo = () => {
       : parseInt(localStorage.getItem("photoPage") || "1");
   });
 
+  const fetchBlobPhotos = useCallback(async () => {
+    const response = await axiosClient.get(`/blob/blob-photo/?page=${currentPage}`);
+    return response.data;
+  }, [currentPage]);
+
   const {
     data: photoData,
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["blob-photos", currentPage],
-    queryFn: () => fetchBlobPhotos(currentPage),
-    staleTime: 30 * 60 * 1000,
+    queryFn: fetchBlobPhotos,
   });
 
   const handlePageChange = (page) => {
@@ -40,7 +37,7 @@ const Photo = () => {
     localStorage.setItem("photoPage", page.toString());
 
     const params = new URLSearchParams(searchParams);
-    params.set("page", page);
+    params.set("page", String(page));
     setSearchParams(params);
   };
 
@@ -51,6 +48,21 @@ const Photo = () => {
       localStorage.setItem("photoPage", pageFromUrl);
     }
   }, [searchParams]);
+
+  // ESC key to close modal
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setSelectedPhoto(null);
+    };
+    if (selectedPhoto) {
+      document.addEventListener("keydown", handleEsc);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "";
+    };
+  }, [selectedPhoto]);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorMessage />;
@@ -73,6 +85,7 @@ const Photo = () => {
               src={photo.photo}
               alt={photo.photoTitle}
               className="w-full h-56 object-cover"
+              loading="lazy"
             />
 
             <div className="p-4">
@@ -106,7 +119,7 @@ const Photo = () => {
         >
           <div className="relative max-w-4xl w-full">
             <button
-              className="absolute -top-10 right-0 text-white text-2xl"
+              className="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition"
               onClick={() => setSelectedPhoto(null)}
             >
               <FaTimes />

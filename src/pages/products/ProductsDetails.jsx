@@ -1,15 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
+import axiosClient from "../../configs/axios.config";
 import Boycott from "../../components/Boycott";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
 import NoProductFound from "../../components/NoDataFound";
 import Time from "../../utils/formateData";
 import PageTitle from "../../utils/PageTitle";
-import { motion } from "framer-motion";
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const ProductsDetails = () => {
   const { id } = useParams();
@@ -22,13 +20,16 @@ const ProductsDetails = () => {
   } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
-      const response = await axios.get(`${baseUrl}/products/list/${id}/`);
+      const response = await axiosClient.get(`/products/list/${id}/`);
       return response.data;
     },
-    staleTime: 1000 * 60 * 30,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return (
+    <div className="pt-28 md:pt-32 lg:pt-36 pb-16 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      <Loader />
+    </div>
+  );
   if (isError) return <Error message={error.message} />;
   if (!product) return <NoProductFound />;
 
@@ -42,19 +43,11 @@ const ProductsDetails = () => {
       ? product.category
       : product.category?.name ?? "Unknown";
 
-  const rawLogo =
-    product.company?.logo ||
-    (typeof product.company === "string" ? null : product.company?.logo);
-
-  const companyLogo = rawLogo
-    ? rawLogo.startsWith("http")
-      ? rawLogo
-      : `${baseUrl.replace(/\/$/, "")}/${rawLogo.replace(/^\//, "")}`
-    : null;
+  const companyLogo = product.company?.logo || null;
 
   return (
     <div className="pt-28 md:pt-32 lg:pt-36 pb-20 bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      <PageTitle title="ইসরায়েলের পণ্যের বিস্তারিত" />
+      <PageTitle title="ইসরায়েলের পণ্যের বিস্তারিত" />
 
       <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 space-y-10">
         {/* Boycott Badge */}
@@ -76,6 +69,7 @@ const ProductsDetails = () => {
                 src={companyLogo}
                 alt={companyName}
                 className="h-40 w-72 object-contain rounded-md shadow-sm"
+                loading="lazy"
               />
             </div>
           )}
@@ -114,7 +108,7 @@ const ProductsDetails = () => {
             </p>
 
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-              যোগ করা হয়েছে: {Time(product.created_at)}
+              যোগ করা হয়েছে: {Time(product.created_at)}
             </p>
           </div>
         </motion.div>

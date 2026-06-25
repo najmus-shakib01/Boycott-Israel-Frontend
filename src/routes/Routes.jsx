@@ -1,10 +1,17 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Main from "../layouts/Main";
-import Blog from "../pages/blog/Blog";
-import Home from "../pages/home/Home";
-import Products from "../pages/products/Products";
-import ProductsDetails from "../pages/products/ProductsDetails";
-import Review from "../pages/review/Review";
+
+const Home = lazy(() => import("../pages/home/Home"));
+const Products = lazy(() => import("../pages/products/Products"));
+const ProductsDetails = lazy(() => import("../pages/products/ProductsDetails"));
+const Blog = lazy(() => import("../pages/blog/Blog"));
+const Review = lazy(() => import("../pages/review/Review"));
+
+// Legal pages
+const TermsAndConditions = lazy(() => import("../pages/legal/TermsAndConditions"));
+const PrivacyPolicy = lazy(() => import("../pages/legal/PrivacyPolicy"));
+const CookiePolicy = lazy(() => import("../pages/legal/CookiePolicy"));
 
 const Routes = createBrowserRouter([
   {
@@ -16,11 +23,11 @@ const Routes = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "ইসরায়েলের-পন্যগুলো",
+        path: "ইসরায়েলের-পন্যগুলো",
         element: <Products />,
       },
       {
-        path: "ইসরায়েলের-পন্যগুলোর-বিস্তারিত/:id",
+        path: "ইসরায়েলের-পন্যগুলোর-বিস্তারিত/:id",
         element: <ProductsDetails />,
       },
       {
@@ -30,6 +37,18 @@ const Routes = createBrowserRouter([
       {
         path: "আপনার-মতামত",
         element: <Review />,
+      },
+      {
+        path: "terms-and-conditions",
+        element: <TermsAndConditions />,
+      },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: "cookie-policy",
+        element: <CookiePolicy />,
       }
     ],
   },

@@ -1,10 +1,12 @@
 import { useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
 
   // Back To Top button visibility
   useEffect(() => {
     const btn = document.querySelector(".back-to-top-btn");
+    if (!btn) return;
 
     const toggleVisibility = () => {
       if (window.scrollY > 300) {
@@ -22,6 +24,19 @@ const Footer = () => {
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
+  const quickLinks = [
+    { label: "🏠 হোম", path: "/" },
+    { label: "🛍️ পণ্যসমূহ", path: "/ইসরায়েলের-পন্যগুলো" },
+    { label: "📝 ব্লগ", path: "/ব্লগ-ছবি-ও-ভিডিও" },
+    { label: "📬 মতামত", path: "/আপনার-মতামত" },
+  ];
+
+  const legalLinks = [
+    { label: "📄 Terms & Conditions", path: "/terms-and-conditions" },
+    { label: "🔐 Privacy Policy", path: "/privacy-policy" },
+    { label: "🍪 Cookie Policy", path: "/cookie-policy" },
+  ];
+
   return (
     <>
       <footer className="bg-white dark:bg-gray-800 rounded-lg shadow-md pt-10 pb-6 text-gray-700 dark:text-gray-300">
@@ -37,8 +52,9 @@ const Footer = () => {
                   src="/logo.png"
                   className="w-16 h-16 rounded-full shadow border border-gray-300 dark:border-gray-700"
                   alt="footer-logo"
+                  loading="lazy"
                 />
-                <h4 className="text-lg font-bold">🛑 বয়কট ইসরায়েল</h4>
+                <h4 className="text-lg font-bold">🛑 বয়কট ইসরায়েল</h4>
               </div>
 
               <p className="leading-7 mt-3">
@@ -53,9 +69,20 @@ const Footer = () => {
             <section>
               <h3 className="font-bold text-xl mb-3">⚖️ লিগ্যাল</h3>
               <ul className="space-y-2">
-                <li>📄 Terms & Conditions</li>
-                <li>🔐 Privacy Policy</li>
-                <li>🍪 Cookie Policy</li>
+                {legalLinks.map((link) => (
+                  <li key={link.path}>
+                    <NavLink
+                      to={link.path}
+                      className={({ isActive }) =>
+                        `hover:text-emerald-500 transition ${
+                          isActive ? "text-emerald-600 dark:text-emerald-400 font-semibold" : ""
+                        }`
+                      }
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
               </ul>
             </section>
 
@@ -63,10 +90,21 @@ const Footer = () => {
             <section>
               <h3 className="font-bold text-xl mb-3">⚡ কুইক লিংকস</h3>
               <ul className="space-y-2">
-                <li>🏠 Home</li>
-                <li>🛍️ Product</li>
-                <li>📝 Blog</li>
-                <li>📬 Contact Us</li>
+                {quickLinks.map((link) => (
+                  <li key={link.path}>
+                    <NavLink
+                      to={link.path}
+                      end={link.path === "/"}
+                      className={({ isActive }) =>
+                        `hover:text-emerald-500 transition ${
+                          isActive ? "text-emerald-600 dark:text-emerald-400 font-semibold" : ""
+                        }`
+                      }
+                    >
+                      {link.label}
+                    </NavLink>
+                  </li>
+                ))}
               </ul>
             </section>
           </div>
@@ -82,12 +120,14 @@ const Footer = () => {
       {/* BACK TO TOP BUTTON */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Back to top"
         className="
           fixed bottom-8 right-6 w-12 h-12 rounded-full
           flex items-center justify-center
           bg-emerald-600 dark:bg-emerald-500 
           text-white shadow-lg 
           hover:bg-emerald-700 dark:hover:bg-emerald-400
+          hover:scale-110
           transition-all duration-300
           opacity-0 pointer-events-none
           back-to-top-btn

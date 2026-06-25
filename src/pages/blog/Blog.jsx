@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useCallback, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import PageTitle from "../../utils/PageTitle";
 import Photo from "./Photo";
@@ -8,22 +8,25 @@ import Video from "./Video";
 const Blog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const isInitialMount = useRef(true);
 
   const { data: activeTab } = useQuery({
     queryKey: ["activeTab"],
     initialData: searchParams.get("tab") || "photos",
   });
 
-  const setActiveTab = (tab) => {
+  const setActiveTab = useCallback((tab) => {
     queryClient.setQueryData(["activeTab"], tab);
-  };
 
-  // Sync tab with URL
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.set("tab", activeTab);
-    setSearchParams(params);
-  }, [activeTab, searchParams, setSearchParams]);
+    const params = new URLSearchParams();
+    params.set("tab", tab);
+    setSearchParams(params, { replace: true });
+  }, [queryClient, setSearchParams]);
+
+  // Only sync on initial mount, not on every searchParams change
+  if (isInitialMount.current) {
+    isInitialMount.current = false;
+  }
 
   return (
     <div className="pt-28 md:pt-32 lg:pt-36 pb-16 min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">

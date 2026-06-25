@@ -1,16 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import axiosClient from "../../configs/axios.config";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import PageTitle from "../../utils/PageTitle";
 import NoProductFound from "./NoProductFound";
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,25 +23,25 @@ const Products = () => {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
   const itemsPerPage = 20;
-  const cacheDuration = 1000 * 60 * 30;
 
+  // Debounced URL sync
   useEffect(() => {
     const delay = setTimeout(() => {
-      const params = new URLSearchParams(searchParams);
+      const params = new URLSearchParams();
 
       if (search) params.set("search", search);
-      else params.delete("search");
-
-      params.set("page", currentPage);
+      if (selectedCategory !== "all") params.set("category", selectedCategory);
+      params.set("page", String(currentPage));
 
       setSearchParams(params, { replace: true });
     }, 400);
 
     return () => clearTimeout(delay);
-  }, [currentPage, search, searchParams, setSearchParams]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, selectedCategory, currentPage]);
 
-  const fetchProducts = async () => {
-    const response = await axios.get(`${baseUrl}/products/list/`, {
+  const fetchProducts = useCallback(async () => {
+    const response = await axiosClient.get("/products/list/", {
       params: {
         category: selectedCategory === "all" ? null : selectedCategory,
         search: search || null,
@@ -51,19 +49,12 @@ const Products = () => {
       },
     });
     return response.data;
-  };
+  }, [selectedCategory, search, currentPage]);
 
-  const fetchCategories = async () => {
-    const response = await axios.get(`${baseUrl}/products/categories/`);
+  const fetchCategories = useCallback(async () => {
+    const response = await axiosClient.get("/products/categories/");
     return response.data.results || response.data || [];
-  };
-
-  const fetchCompanies = async () => {
-    const response = await axios.get(`${baseUrl}/products/companies/`, {
-      params: { search: search || null },
-    });
-    return response.data;
-  };
+  }, []);
 
   const {
     data: productsData = { results: [], count: 0 },
@@ -72,7 +63,6 @@ const Products = () => {
   } = useQuery({
     queryKey: ["products", selectedCategory, search, currentPage],
     queryFn: fetchProducts,
-    staleTime: cacheDuration,
   });
 
   const {
@@ -82,24 +72,14 @@ const Products = () => {
   } = useQuery({
     queryKey: ["categories"],
     queryFn: fetchCategories,
-    staleTime: cacheDuration,
   });
 
-  const { isLoading: companiesLoading, isError: companiesError } = useQuery({
-    queryKey: ["companies", search],
-    queryFn: fetchCompanies,
-    staleTime: cacheDuration,
-    enabled: !!search,
-  });
+  const isLoading = productsLoading || categoriesLoading;
+  const isError = productsError || categoriesError;
 
-  const isLoading =
-    productsLoading || categoriesLoading || companiesLoading;
-
-  const isError = productsError || categoriesError || companiesError;
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(productsData.count / itemsPerPage)
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(productsData.count / itemsPerPage)),
+    [productsData.count]
   );
 
   const handleCategoryChange = (categoryName) => {
@@ -108,7 +88,7 @@ const Products = () => {
     if (categoryName !== "all") params.set("category", categoryName);
     if (search) params.set("search", search);
 
-    params.set("page", 1); 
+    params.set("page", "1");
 
     setSearchParams(params, { replace: true });
     setSelectedCategory(categoryName);
@@ -116,7 +96,7 @@ const Products = () => {
 
   const handlePageChange = (page) => {
     const params = new URLSearchParams(searchParams);
-    params.set("page", page);
+    params.set("page", String(page));
 
     setSearchParams(params, { replace: true });
 
@@ -131,12 +111,12 @@ const Products = () => {
 
   return (
     <div className="pt-28 md:pt-32 lg:pt-36 pb-16 bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      <PageTitle title="ইসরায়েলের পণ্য" />
+      <PageTitle title="ইসরায়েলের পণ্য" />
 
       <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 space-y-6">
 
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-          ইসরায়েলের পণ্যসমূহ
+          ইসরায়েলের পণ্যসমূহ
         </h1>
 
         <div className="relative max-w-md w-full">
@@ -213,11 +193,12 @@ const Products = () => {
           <>
             {/* GRID */}
             <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
-              {productsData.results.map((product) => (
+              {productsData.results.map((product, index) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}
                   className="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition overflow-hidden"
                 >
                   <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-center h-28">
@@ -226,6 +207,7 @@ const Products = () => {
                         src={product.company.logo}
                         alt={product.company?.name}
                         className="w-36 h-24 object-contain"
+                        loading="lazy"
                       />
                     )}
                   </div>
@@ -238,7 +220,7 @@ const Products = () => {
                     <button
                       onClick={() =>
                         navigate(
-                          `/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${product.id}/`
+                          `/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${product.id}/`
                         )
                       }
                       className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline"

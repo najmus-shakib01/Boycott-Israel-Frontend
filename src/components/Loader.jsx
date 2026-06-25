@@ -5,13 +5,13 @@ const Loader = () => {
         {[...Array(8)].map((_, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 h-64 animate-pulse"
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 h-64 overflow-hidden relative"
           >
-            <div className="bg-gray-200 dark:bg-gray-700 h-6 w-3/4 mb-3 rounded"></div>
-            <div className="bg-gray-200 dark:bg-gray-700 h-4 w-full mb-2 rounded"></div>
-            <div className="bg-gray-200 dark:bg-gray-700 h-4 w-5/6 mb-2 rounded"></div>
-            <div className="bg-gray-200 dark:bg-gray-700 h-4 w-2/3 mb-4 rounded"></div>
-            <div className="bg-gray-200 dark:bg-gray-700 h-8 w-full rounded"></div>
+            <div className="bg-gray-200 dark:bg-gray-700 h-6 w-3/4 mb-3 rounded shimmer"></div>
+            <div className="bg-gray-200 dark:bg-gray-700 h-4 w-full mb-2 rounded shimmer"></div>
+            <div className="bg-gray-200 dark:bg-gray-700 h-4 w-5/6 mb-2 rounded shimmer"></div>
+            <div className="bg-gray-200 dark:bg-gray-700 h-4 w-2/3 mb-4 rounded shimmer"></div>
+            <div className="bg-gray-200 dark:bg-gray-700 h-8 w-full rounded shimmer"></div>
           </div>
         ))}
       </div>

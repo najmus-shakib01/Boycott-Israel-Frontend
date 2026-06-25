@@ -1,19 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
+import axiosClient from "../../configs/axios.config";
 import ErrorMessage from "../../components/Error";
 import LoadingSpinner from "../../components/Loader";
 import Pagination from "../../components/Pagination";
 import Time from "../../utils/formateData";
-
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
-const fetchBlobVideos = async (page = 1) => {
-  const response = await axios.get(`${baseUrl}/blob/blob-video/?page=${page}`);
-  return response.data;
-};
 
 const Video = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,14 +18,18 @@ const Video = () => {
       : parseInt(localStorage.getItem("videoPage") || "1");
   });
 
+  const fetchBlobVideos = useCallback(async () => {
+    const response = await axiosClient.get(`/blob/blob-video/?page=${currentPage}`);
+    return response.data;
+  }, [currentPage]);
+
   const {
     data: videoData,
     isLoading,
     isError,
   } = useQuery({
     queryKey: ["blob-videos", currentPage],
-    queryFn: () => fetchBlobVideos(currentPage),
-    staleTime: 30 * 60 * 1000,
+    queryFn: fetchBlobVideos,
   });
 
   const handlePageChange = (page) => {
@@ -40,7 +37,7 @@ const Video = () => {
     localStorage.setItem("videoPage", page.toString());
 
     const params = new URLSearchParams(searchParams);
-    params.set("page", page);
+    params.set("page", String(page));
     setSearchParams(params);
   };
 
@@ -51,6 +48,21 @@ const Video = () => {
       localStorage.setItem("videoPage", pageFromUrl);
     }
   }, [searchParams]);
+
+  // ESC key to close modal
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") setSelectedVideo(null);
+    };
+    if (selectedVideo) {
+      document.addEventListener("keydown", handleEsc);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+      document.body.style.overflow = "";
+    };
+  }, [selectedVideo]);
 
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorMessage />;
@@ -74,6 +86,7 @@ const Video = () => {
                 src={video.video}
                 title={video.videoTitle}
                 allowFullScreen
+                loading="lazy"
               />
             </div>
 
@@ -107,7 +120,7 @@ const Video = () => {
           <div className="relative max-w-5xl w-full max-h-[90vh]">
             <button
               onClick={() => setSelectedVideo(null)}
-              className="absolute -top-10 right-0 text-white text-2xl"
+              className="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition"
             >
               <FaTimes />
             </button>
