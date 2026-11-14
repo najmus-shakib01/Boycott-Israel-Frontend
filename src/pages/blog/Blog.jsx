@@ -40,8 +40,8 @@ const Blog = () => {
       />
 
       <section className="max-w-[1120px] mx-auto px-4 space-y-6">
-        {/* Segmented Tab Pill Control */}
-        <div className="flex justify-center">
+        {/* Segmented Tab Pill Control (Left Aligned) */}
+        <div className="flex justify-start">
           <div
             role="tablist"
             aria-label="মিডিয়া ক্যাটাগরি"

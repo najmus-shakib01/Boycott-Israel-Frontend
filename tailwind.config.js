@@ -22,9 +22,11 @@ export default {
         "on-primary": "var(--on-primary)",
       },
       fontFamily: {
-        sans: ["Hind Siliguri", "Inter", "system-ui", "-apple-system", "sans-serif"],
-        bangla: ["Hind Siliguri", "Inter", "sans-serif"],
-        arabic: ["Amiri", "Traditional Arabic", "serif"],
+        sans: ["'Noto Sans Bengali'", "'Inter'", "system-ui", "-apple-system", "sans-serif"],
+        heading: ["'Hind Siliguri'", "sans-serif"],
+        body: ["'Noto Sans Bengali'", "sans-serif"],
+        bangla: ["'Noto Sans Bengali'", "'Hind Siliguri'", "sans-serif"],
+        arabic: ["'Amiri'", "serif"],
       },
       borderRadius: {
         sm: "var(--r-sm)",

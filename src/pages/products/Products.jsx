@@ -154,16 +154,16 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Category Chips (Horizontally Scrollable) */}
+        {/* Category Filter Chips (Clean wrapping without horizontal scroll) */}
         <div
           role="group"
           aria-label="ক্যাটাগরি ফিল্টার"
-          className="flex items-center gap-2 overflow-x-auto py-2 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
+          className="flex flex-wrap items-center gap-2 sm:gap-2.5 py-1"
         >
           <button
             onClick={() => handleCategoryChange("all")}
             aria-pressed={selectedCategory === "all"}
-            className={`flex-none min-h-[44px] px-5 rounded-full border text-sm font-medium transition-all cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+            className={`min-h-[42px] px-4 sm:px-5 rounded-full border text-xs sm:text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               selectedCategory === "all"
                 ? "bg-primary border-primary text-on-primary shadow-sm"
                 : "border-line bg-surface text-text hover:border-primary"
@@ -179,7 +179,7 @@ const Products = () => {
                 key={category.id || category.name}
                 onClick={() => handleCategoryChange(category.name)}
                 aria-pressed={isSelected}
-                className={`flex-none min-h-[44px] px-5 rounded-full border text-sm font-medium transition-all cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                className={`min-h-[42px] px-4 sm:px-5 rounded-full border text-xs sm:text-sm font-medium transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   isSelected
                     ? "bg-primary border-primary text-on-primary shadow-sm"
                     : "border-line bg-surface text-text hover:border-primary"

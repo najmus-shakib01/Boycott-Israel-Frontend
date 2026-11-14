@@ -50,7 +50,7 @@ const Pagination = ({
 
   return (
     <nav
-      className="flex justify-center items-center gap-2 mt-8 flex-wrap"
+      className="flex justify-end items-center gap-2 mt-8 flex-wrap"
       aria-label="পেজিনেশন নেভিগেশন"
     >
       {/* Previous Button */}

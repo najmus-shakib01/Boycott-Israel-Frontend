@@ -13,7 +13,8 @@
   --muted: #52615A;
   --line: #DDE5E1;
   --on-primary: #FFFFFF;
-  --font: "Hind Siliguri", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font: "Noto Sans Bengali", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-heading: "Hind Siliguri", sans-serif;
   --s1: 4px;
   --s2: 8px;
   --s3: 12px;
@@ -80,7 +81,8 @@ body {
   box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
   line-height: 1.35;
   letter-spacing: -0.01em;
 }

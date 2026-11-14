@@ -1,9 +1,14 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+
 const PalestineHistory = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const article = {
     title: "ফিলিস্তিনের সংক্ষিপ্ত ইতিহাস",
     author: "মাওলানা মুরতাযা মাহদী",
     body: `
-  ফিলিস্তিন নবীদের ভূমি। হযরত ইবরাহিম আলাইহিস সালাম থেকে হযরত ঈসা আলাইহিস সালাম পর্যন্ত অসংখ্য নবীদের আবাসভূমি ফিলিস্তিন। এখানেই ইসলামের প্রথম কিবলা মসজিদে আকসা, যার চারপাশকে আল্লাহ বরকতময় করেছেন। মেরাজের রাতে এখানে নবীদের ইমাম হয়েছিলেন নবীজি সাল্লাল্লাহু سُبْحَانَ الَّذِي أَسْرَىٰ بِعَبْدِهِ لَيْلًا مِّنَ الْمَسْجِدِ الْحَرَامِ إِلَى الْمَسْجِدِ الْأَقْصَى الَّذِي بَارَكْنَا حَوْلَهُ لِنُرِيَهُ مِنْ آيَاتِنَا ۚ إِنَّهُ هُوَ السَّمِيعُ الْبَصِيرُ
+  ফিলিস্তিন নবীদের ভূমি। হযরত ইবরাহিম আলাইহিস সালাম থেকে হযরত ঈসা আলাইহিস সালাম পর্যন্ত অসংখ্য নবীদের আবাসভূমি ফিলিস্তিন। এখানেই ইসলামের প্রথম কিবলা মসজিদে আকসা, যার চারপাশকে আল্লাহ বরকতময় করেছেন। মেরাজের রাতে এখানে নবীদের ইমাম হয়েছিলেন নবীজি সাল্লাল্লাহু سُبْحَانَ الَّذِي أَسْرَىٰ بِعَبْدِهِ লَيْلًا مِّنَ الْمَسْجِدِ الْحَرَامِ إِلَى الْمَسْجِدِ الْأَقْصَى الَّذِي بَارَكْنَا حَوْلَهُ لِنُرِيَهُ مِنْ آيَاتِنَا ۚ إِنَّهُ هُوَ السَّمِيعُ الْبَصِيرُ
   অর্থ : পবিত্র সেই সত্তা, যিনি আপন বান্দাকে রাতের বেলায় ভ্রমণ করিয়েছেন মসজিদুল হারাম থেকে মসজিদুল আকসা পর্যন্ত, যার আশপাশকে আমি বরকতময় করেছি- যাতে তাঁকে আমার (কুদরতের) কিছু নিদর্শন দেখাই। নিশ্চয় তিনিই সর্বশ্রোতা, সর্বদ্রষ্টা। (সুরা বনী ইসরাইল: ১)  
         
   ফিলিস্তিনে তাওহীদের দাওয়াত নিয়ে আসেন হযরত ইবরাহিম আলাইহিস সালাম খ্রিস্টপূর্ব ১৯০০ সনে। এর আগে এখানে বসবাস ছিল কেনআনী ও আমোরীয়দের। হযরত ইসমাঈল আলাইহিস সালাম এখানেই জন্মগ্রহণ করেন। তাঁর কয়েক বছর পর জন্মগ্রহণ করেন হযরত ইসহাক আলাইহিস সালাম। ইবরাহিম আলাইহিস সালাম বেঁচে থাকতেই হযরত ইয়াকুব আলাইহিস সালামের জন্ম হয় হযরত ইসহাক আলাইহিস সালামের ঔরসে। হযরত ইয়াকুব আলাইহিস সালাম প্রথমে তুরস্কের দক্ষিণাঞ্চলে হিজরত করলেও পরে আবার ফিরে আসেন ফিলিস্তিনে। হযরত ইয়াকুব আলাইহিস সালামের আরেক নাম ইসরাইল। সে হিসাবে তার বংশধরদেরকে বনী ইসরাইল বলা হয়। হযরত ইউসুফ আলাইহিস সালাম মিশরে ক্ষমতা লাভ করার পর বাবা ইয়াকুব আলাইহিস সালামকে সপরিবারে মিশরে নিয়ে আসেন। তারা এখানে দীর্ঘকাল অবস্থান করেন।
@@ -66,10 +71,18 @@ const PalestineHistory = () => {
     },
   };
 
+  const handleCollapse = () => {
+    setIsExpanded(false);
+    const element = document.getElementById("palestine-history");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
-    <section className="space-y-4 pt-4">
+    <section id="palestine-history" className="space-y-4 pt-4 scroll-mt-24">
       <div>
-        <h2 className="text-2xl md:text-3xl font-bold text-text">
+        <h2 className="text-2xl md:text-3xl font-bold font-heading text-text">
           ফিলিস্তিনের সংক্ষিপ্ত ইতিহাস
         </h2>
         <p className="text-muted text-sm md:text-base mt-2 max-w-[65ch]">
@@ -78,9 +91,10 @@ const PalestineHistory = () => {
         </p>
       </div>
 
-      <article className="rounded-[14px] border border-line bg-surface p-5 md:p-8 shadow-sm">
+      <article className="rounded-[14px] border border-line bg-surface p-5 sm:p-7 md:p-8 shadow-sm transition-all">
+        {/* Article Header */}
         <div className="border-b border-line pb-4 mb-4">
-          <h3 className="text-xl md:text-2xl font-bold text-text">
+          <h3 className="text-xl md:text-2xl font-bold font-heading text-text">
             {article.title}
           </h3>
           <p className="text-xs md:text-sm text-muted mt-1 font-medium">
@@ -88,17 +102,52 @@ const PalestineHistory = () => {
           </p>
         </div>
 
-        {/* Scrollable story container */}
-        <div
-          tabIndex={0}
-          aria-label="ইতিহাস, স্ক্রল করুন"
-          className="max-h-[360px] md:max-h-[440px] overflow-y-auto pr-3 custom-scrollbar text-sm md:text-base leading-[1.85] text-muted whitespace-pre-line text-justify focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
-        >
-          {article.body}
+        {/* User-friendly Reading Container: Natural document flow with preview / expand */}
+        <div className="relative">
+          <div
+            className={`text-sm sm:text-base leading-[1.85] text-muted whitespace-pre-line text-justify transition-all duration-300 ${
+              isExpanded
+                ? "max-h-none"
+                : "max-h-[280px] sm:max-h-[320px] overflow-hidden"
+            }`}
+          >
+            {article.body}
+          </div>
+
+          {/* Elegant gradient fade when collapsed */}
+          {!isExpanded && (
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-surface via-surface/85 to-transparent pointer-events-none"
+            />
+          )}
+        </div>
+
+        {/* Read More / Read Less Toggle Button */}
+        <div className="pt-4 flex justify-center border-t border-line/60 mt-2">
+          {!isExpanded ? (
+            <button
+              onClick={() => setIsExpanded(true)}
+              aria-expanded={false}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-on-primary font-semibold text-sm sm:text-base transition-all shadow-sm hover:scale-[1.02] cursor-pointer"
+            >
+              <span>সম্পূর্ণ ইতিহাস পড়ুন</span>
+              <ChevronDown size={18} aria-hidden="true" />
+            </button>
+          ) : (
+            <button
+              onClick={handleCollapse}
+              aria-expanded={true}
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-line bg-surface hover:border-primary text-text hover:text-primary font-medium text-sm transition-all cursor-pointer"
+            >
+              <span>সংক্ষেপে দেখুন</span>
+              <ChevronUp size={18} aria-hidden="true" />
+            </button>
+          )}
         </div>
 
         {/* Story Footer / Attribution */}
-        <div className="mt-5 pt-4 border-t border-line text-xs md:text-sm text-muted flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 font-medium">
+        <div className="mt-6 pt-4 border-t border-line text-xs md:text-sm text-muted flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 font-medium">
           <span>{article.footer.authorTitle}</span>
           <span>{article.footer.institution}</span>
         </div>
