@@ -80,14 +80,23 @@ const Video = () => {
             className="rounded-xl overflow-hidden shadow bg-white dark:bg-gray-800 cursor-pointer hover:shadow-lg transition"
             onClick={() => setSelectedVideo(video)}
           >
-            <div className="relative pt-[56.25%]">
-              <iframe
-                className="absolute top-0 left-0 w-full h-full"
-                src={video.video}
-                title={video.videoTitle}
-                allowFullScreen
-                loading="lazy"
-              />
+            <div className="relative pt-[56.25%] bg-black">
+              {video.video && (video.video.includes(".mp4") || video.video.includes("supabase.co")) ? (
+                <video
+                  className="absolute top-0 left-0 w-full h-full object-cover"
+                  src={video.video}
+                  controls
+                  preload="metadata"
+                />
+              ) : (
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src={video.video}
+                  title={video.videoTitle}
+                  allowFullScreen
+                  loading="lazy"
+                />
+              )}
             </div>
 
             <div className="p-4">
@@ -125,12 +134,21 @@ const Video = () => {
               <FaTimes />
             </button>
 
-            <iframe
-              className="w-full h-[80vh] rounded-xl shadow-xl"
-              src={selectedVideo.video}
-              title={selectedVideo.videoTitle}
-              allowFullScreen
-            />
+            {selectedVideo.video && (selectedVideo.video.includes(".mp4") || selectedVideo.video.includes("supabase.co")) ? (
+              <video
+                className="w-full max-h-[80vh] rounded-xl shadow-xl bg-black"
+                src={selectedVideo.video}
+                controls
+                autoPlay
+              />
+            ) : (
+              <iframe
+                className="w-full h-[80vh] rounded-xl shadow-xl"
+                src={selectedVideo.video}
+                title={selectedVideo.videoTitle}
+                allowFullScreen
+              />
+            )}
           </div>
         </div>
       )}
