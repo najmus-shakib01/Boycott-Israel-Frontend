@@ -103,6 +103,8 @@ const Photo = () => {
                   src={photo.photo}
                   alt={photo.photoTitle}
                   loading="lazy"
+                  width="400"
+                  height="250"
                   onError={() =>
                     setImgErrors((prev) => ({ ...prev, [photo.id]: true }))
                   }

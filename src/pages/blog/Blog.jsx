@@ -33,7 +33,11 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen py-8 md:py-10">
-      <PageTitle title="গাজার ফটো এবং ভিডিও — বয়কট ইসরায়েল" />
+      <PageTitle
+        title={isPhotos ? "গাজার ফটো গ্যালারি" : "গাজার ভিডিও সংগ্রহ"}
+        description="ফিলিস্তিন ও গাজার বাস্তব পরিস্থিতি, তথ্যবহুল ছবি ও প্রামাণ্য ভিডিও সংগ্রহ।"
+        canonicalPath="/ব্লগ-ছবি-ও-ভিডিও"
+      />
 
       <section className="max-w-[1120px] mx-auto px-4 space-y-6">
         {/* Segmented Tab Pill Control */}
@@ -76,9 +80,9 @@ const Blog = () => {
         </div>
 
         {/* Section Heading */}
-        <h2 className="text-2xl sm:text-3xl font-bold text-text text-center sm:text-left">
-          {isPhotos ? "গাজার ফটো" : "গাজার ভিডিও"}
-        </h2>
+        <h1 className="text-2xl sm:text-3xl font-bold text-text text-center sm:text-left">
+          {isPhotos ? "গাজার ফটো গ্যালারি" : "গাজার ভিডিও সংগ্রহ"}
+        </h1>
 
         {/* Tab Panels */}
         <div id="panel-media" role="tabpanel">

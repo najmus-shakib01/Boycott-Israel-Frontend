@@ -23,7 +23,11 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      <PageTitle title="বয়কট ইসরায়েল — হোম" />
+      <PageTitle
+        title="বয়কট কী? কেন করব?"
+        description="ইসরায়েলি ও বয়কটযোগ্য পণ্য চিহ্নিত করার নির্ভরযোগ্য উন্মুক্ত ডিরেক্টরি। ফিলিস্তিনের নিরীহ মানুষের সমর্থনে সচেতন হোন এবং বয়কট আন্দোলনে অংশ নিন।"
+        canonicalPath="/"
+      />
 
       {/* Hero Section */}
       <section className="bg-primary-dark text-white pt-10 sm:pt-14 pb-14 sm:pb-20 relative overflow-hidden transition-colors">

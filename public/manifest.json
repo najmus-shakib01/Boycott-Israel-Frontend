@@ -1,0 +1,48 @@
+{
+  "name": "বয়কট ইসরায়েল — Boycott Israel",
+  "short_name": "বয়কট ইসরায়েল",
+  "description": "ইসরায়েলি ও বয়কটযোগ্য পণ্য সহজেই চিহ্নিত করুন এবং বয়কট আন্দোলনে অংশ নিন।",
+  "lang": "bn",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0A3F31",
+  "background_color": "#F6F8F7",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "পণ্যসমূহ",
+      "short_name": "পণ্য",
+      "description": "ইসরায়েলি পণ্যের সম্পূর্ণ তালিকা দেখুন",
+      "url": "/%E0%A6%87%E0%A6%B8%E0%A6%B0%E0%A6%BE%E0%A6%AF%E0%A6%BC%E0%A7%87%E0%A6%B2%E0%A7%87%E0%A6%B0-%E0%A6%AA%E0%A6%A8%E0%A7%8D%E0%A6%AF%E0%A6%97%E0%A7%81%E0%A6%B2%E0%A7%8B",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "আপনার মতামত",
+      "short_name": "মতামত",
+      "description": "ওয়েবসাইটের উন্নয়নে আপনার মতামত জানান",
+      "url": "/%E0%A6%86%E0%A6%AA%E0%A6%A8%E0%A6%BE%E0%A6%B0-%E0%A6%AE%E0%A6%A4%E0%A6%BE%E0%A6%AE%E0%A6%A4",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192" }]
+    }
+  ]
+}

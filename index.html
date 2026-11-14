@@ -2,33 +2,86 @@
 <html lang="bn">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#0A3F31" />
+    <meta name="color-scheme" content="light dark" />
 
     <!-- Primary SEO -->
-    <title>বয়কট ইসরায়েল — ইসরায়েলি পণ্য চেনার প্ল্যাটফর্ম</title>
-    <meta name="description" content="ইসরায়েলি পণ্য চিহ্নিত করুন, বয়কট আন্দোলনে অংশ নিন। ফিলিস্তিনের পাশে দাঁড়ান।" />
-    <meta name="keywords" content="বয়কট ইসরায়েল, ইসরায়েলি পণ্য, ফিলিস্তিন, boycott israel, palestine, গাজা" />
-    <meta name="author" content="Boycott Israel" />
-    <meta name="theme-color" content="#0A3F31" />
+    <title>বয়কট ইসরায়েল — Boycott Israel | সচেতনতামূলক পণ্য ডিরেক্টরি</title>
+    <meta
+      name="description"
+      content="ইসরায়েলি ও বয়কটযোগ্য পণ্য সহজেই চিহ্নিত করুন। ফিলিস্তিনের নিরীহ মানুষের সমর্থনে সচেতন হোন এবং শান্তিপূর্ণ বয়কট আন্দোলনে অংশ নিন।"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://boycott-israel.vercel.app/" />
 
-    <!-- Open Graph / Facebook -->
+    <!-- Google Fonts (Only Hind Siliguri + Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon & PWA Icons (Falling back to existing valid assets to prevent 404s) -->
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="বয়কট ইসরায়েল — ইসরায়েলি পণ্য চেনার প্ল্যাটফর্ম" />
-    <meta property="og:description" content="ইসরায়েলি পণ্য চিহ্নিত করুন, বয়কট আন্দোলনে অংশ নিন। ফিলিস্তিনের পাশে দাঁড়ান।" />
-    <meta property="og:image" content="/logo.png" />
+    <meta property="og:site_name" content="বয়কট ইসরায়েল — Boycott Israel" />
     <meta property="og:locale" content="bn_BD" />
+    <meta property="og:title" content="বয়কট ইসরায়েল — Boycott Israel | সচেতনতামূলক পণ্য ডিরেক্টরি" />
+    <meta
+      property="og:description"
+      content="ইসরায়েলি ও বয়কটযোগ্য পণ্য সহজেই চিহ্নিত করুন। ফিলিস্তিনের নিরীহ মানুষের সমর্থনে সচেতন হোন এবং শান্তিপূর্ণ বয়কট আন্দোলনে অংশ নিন।"
+    />
+    <meta property="og:url" content="https://boycott-israel.vercel.app/" />
+    <meta property="og:image" content="https://boycott-israel.vercel.app/logo.png" />
+    <meta property="og:image:secure_url" content="https://boycott-israel.vercel.app/logo.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="বয়কট ইসরায়েল প্ল্যাটফর্ম লোগো" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="বয়কট ইসরায়েল" />
-    <meta name="twitter:description" content="ইসরায়েলি পণ্য চিহ্নিত করুন, বয়কট আন্দোলনে অংশ নিন।" />
-    <meta name="twitter:image" content="/logo.png" />
+    <meta name="twitter:title" content="বয়কট ইসরায়েল — Boycott Israel" />
+    <meta
+      name="twitter:description"
+      content="ইসরায়েলি ও বয়কটযোগ্য পণ্য সহজেই চিহ্নিত করুন। সচেতন হোন এবং বয়কট আন্দোলনে অংশ নিন।"
+    />
+    <meta name="twitter:image" content="https://boycott-israel.vercel.app/logo.png" />
+
+    <!-- Structured Data (JSON-LD): WebSite & Organization (Only genuine verified data) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://boycott-israel.vercel.app/#website",
+            "url": "https://boycott-israel.vercel.app/",
+            "name": "বয়কট ইসরায়েল",
+            "alternateName": "Boycott Israel",
+            "inLanguage": "bn-BD",
+            "description": "ইসরায়েলি ও বয়কটযোগ্য পণ্য চিহ্নিত করার নির্ভরযোগ্য উন্মুক্ত ডিরেক্টরি।"
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://boycott-israel.vercel.app/#organization",
+            "name": "বয়কট ইসরায়েল",
+            "alternateName": "Boycott Israel",
+            "url": "https://boycott-israel.vercel.app/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://boycott-israel.vercel.app/logo.png"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>ইন্টারনেট সংযোগ বিচ্ছিন্ন — বয়কট ইসরায়েল</title>
+    <style>
+      :root {
+        --primary: #0E6B4D;
+        --primary-d: #0A3F31;
+        --primary-t: #E3F3EC;
+        --bg: #F6F8F7;
+        --surface: #FFFFFF;
+        --text: #14201B;
+        --muted: #52615A;
+        --line: #DDE5E1;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --primary: #34C28E;
+          --primary-d: #0A2A21;
+          --primary-t: #123A2D;
+          --bg: #0C1411;
+          --surface: #142019;
+          --text: #EAF2EE;
+          --muted: #9DB0A7;
+          --line: #243A30;
+        }
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Hind Siliguri", system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 40px 24px;
+        max-width: 480px;
+        width: 100%;
+        box-shadow: 0 4px 20px rgba(10, 63, 49, 0.08);
+      }
+      .icon-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--primary-t);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        margin: 0 auto 20px;
+      }
+      h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; }
+      p { color: var(--muted); font-size: 1rem; line-height: 1.6; margin-bottom: 28px; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 32px;
+        border-radius: 999px;
+        background: var(--primary);
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+      .btn:hover {
+        background: var(--primary-d);
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="icon-circle" aria-hidden="true">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+      </div>
+      <h1>ইন্টারনেট সংযোগ পাওয়া যাচ্ছে না</h1>
+      <p>
+        আপনার ডিভাইসটি বর্তমানে অফলাইনে রয়েছে। অনুগ্রহ করে ইন্টারনেট সংযোগ পরীক্ষা করে পুনরায় চেষ্টা করুন।
+      </p>
+      <button class="btn" onclick="window.location.reload()">
+        পুনরায় চেষ্টা করুন
+      </button>
+    </main>
+  </body>
+</html>

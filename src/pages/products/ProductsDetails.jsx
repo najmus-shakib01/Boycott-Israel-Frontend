@@ -38,6 +38,10 @@ const ProductsDetails = () => {
   if (isError) {
     return (
       <div className="max-w-[760px] mx-auto px-4 py-12">
+        <PageTitle
+          title="পণ্যটি লোড করা যায়নি"
+          noindex={true}
+        />
         <Error message={error?.message} onRetry={refetch} />
       </div>
     );
@@ -46,6 +50,10 @@ const ProductsDetails = () => {
   if (!product) {
     return (
       <div className="max-w-[760px] mx-auto px-4 py-12">
+        <PageTitle
+          title="কোনো পণ্য পাওয়া যায়নি"
+          noindex={true}
+        />
         <NoDataFound title="পণ্যটি খুঁজে পাওয়া যায়নি" />
       </div>
     );
@@ -63,9 +71,37 @@ const ProductsDetails = () => {
 
   const companyLogo = product.company?.logo || null;
 
+  // Genuine ItemPage Schema using only verified fields from API
+  const itemSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemPage",
+    name: `${companyName} — বয়কট ইসরায়েল`,
+    description:
+      product.description ||
+      `${companyName} বয়কট তালিকাভুক্ত পণ্য ও কোম্পানি বিবরণ।`,
+    url: `https://boycott-israel.vercel.app/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${id}`,
+    about: {
+      "@type": "Thing",
+      name: companyName,
+    },
+    ...(companyLogo ? { image: companyLogo } : {}),
+    ...(product.created_at ? { datePublished: product.created_at } : {}),
+  };
+
   return (
     <div className="min-h-screen py-8 md:py-12">
-      <PageTitle title={`${companyName} — ইসরায়েলের পণ্যের বিস্তারিত`} />
+      <PageTitle
+        title={`${companyName} — পণ্যের বিস্তারিত`}
+        description={
+          product.description
+            ? product.description.replace(/\s+/g, " ").trim().slice(0, 160)
+            : `${companyName} (${category}) এর বিস্তারিত তথ্য ও বয়কট বিবরণ।`
+        }
+        canonicalPath={`/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${id}`}
+        ogImage={companyLogo}
+        ogType="article"
+        schema={itemSchema}
+      />
 
       <section className="max-w-[760px] mx-auto px-4 space-y-6">
         {/* Back Link */}
@@ -82,7 +118,7 @@ const ProductsDetails = () => {
         {/* Boycott Header Badge */}
         <Boycott />
 
-        {/* Main Details Card (styled matching reference dialog style) */}
+        {/* Main Details Card */}
         <article className="rounded-[22px] border border-line bg-surface p-6 sm:p-8 md:p-10 shadow-hover space-y-6">
           {/* Logo Showcase */}
           <div className="h-40 sm:h-48 rounded-[14px] bg-primary-tint flex items-center justify-center p-4 relative overflow-hidden">
@@ -93,9 +129,11 @@ const ProductsDetails = () => {
             {companyLogo ? (
               <img
                 src={companyLogo}
-                alt={companyName}
+                alt={`${companyName} এর অফিশিয়াল লোগো`}
+                width="288"
+                height="144"
+                fetchPriority="high"
                 className="max-h-32 sm:max-h-36 max-w-[85%] object-contain"
-                loading="lazy"
               />
             ) : (
               <span className="font-bold text-2xl sm:text-3xl text-primary font-sans">

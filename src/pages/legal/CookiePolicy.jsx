@@ -6,8 +6,9 @@ const CookiePolicy = () => {
   return (
     <div className="min-h-screen py-8 md:py-12">
       <PageTitle
-        title="কুকি নীতি — বয়কট ইসরায়েল"
-        description="বয়কট ইসরায়েল প্ল্যাটফর্মে কুকি ব্যবহারের নীতি সম্পর্কে জানুন।"
+        title="কুকি নীতি"
+        description="বয়কট ইসরায়েল প্ল্যাটফর্মে কুকি ও লোকাল স্টোরেজ ব্যবহারের নীতিমালা সম্পর্কে জানুন।"
+        canonicalPath="/cookie-policy"
       />
 
       <div className="max-w-[760px] mx-auto px-4 space-y-6">

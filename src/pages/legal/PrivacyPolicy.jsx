@@ -6,8 +6,9 @@ const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen py-8 md:py-12">
       <PageTitle
-        title="গোপনীয়তা নীতি — বয়কট ইসরায়েল"
-        description="বয়কট ইসরায়েল প্ল্যাটফর্মের গোপনীয়তা নীতি সম্পর্কে বিস্তারিত জানুন।"
+        title="গোপনীয়তা নীতি"
+        description="বয়কট ইসরায়েল প্ল্যাটফর্মের তথ্য সংরক্ষণ ও গোপনীয়তা সুরক্ষা নীতিমালা সম্পর্কে জানুন।"
+        canonicalPath="/privacy-policy"
       />
 
       <div className="max-w-[760px] mx-auto px-4 space-y-6">

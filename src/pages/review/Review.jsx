@@ -107,7 +107,11 @@ const Review = () => {
 
   return (
     <div className="min-h-screen py-8 md:py-12">
-      <PageTitle title="আপনার মতামত জানান — বয়কট ইসরায়েল" />
+      <PageTitle
+        title="আপনার মতামত জানান"
+        description="বয়কট ইসরায়েল ওয়েবসাইটের উন্নয়নে আপনার মূল্যবান মতামত, সংশোধনী প্রস্তাব বা নতুন পণ্যের তথ্য পাঠান।"
+        canonicalPath="/আপনার-মতামত"
+      />
 
       <section className="max-w-[760px] mx-auto px-4 space-y-6">
         {/* Header */}

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { BoycottStamp } from "../../components/BoycottLogo";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
@@ -21,7 +21,6 @@ const Products = () => {
     searchParams.get("category") || "all"
   );
 
-  const navigate = useNavigate();
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const itemsPerPage = 20;
 
@@ -108,9 +107,17 @@ const Products = () => {
     setSearchParams({}, { replace: true });
   };
 
+  const hasNoResults =
+    !isLoading && (!productsData?.results || productsData.results.length === 0);
+
   return (
     <div className="min-h-screen py-8 md:py-10">
-      <PageTitle title="ইসরায়েলের পণ্যসমূহ — বয়কট ইসরায়েল" />
+      <PageTitle
+        title={search ? `"${search}" — পণ্য তালিকা` : "ইসরায়েলের পণ্যসমূহ"}
+        description="বাংলাদেশে প্রচলিত ও আন্তর্জাতিক বাজারে থাকা ইসরায়েলি পণ্য এবং ব্র্যান্ডের নির্ভরযোগ্য উন্মুক্ত তালিকা।"
+        canonicalPath="/ইসরায়েলের-পন্যগুলো"
+        noindex={hasNoResults}
+      />
 
       <section className="max-w-[1120px] mx-auto px-4 space-y-6">
         {/* Header Title */}
@@ -212,14 +219,10 @@ const Products = () => {
                 const logoUrl = product.company?.logo;
 
                 return (
-                  <button
+                  <Link
                     key={product.id}
-                    onClick={() =>
-                      navigate(
-                        `/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${product.id}/`
-                      )
-                    }
-                    className="rounded-[14px] border border-line bg-surface overflow-hidden shadow-sm hover:shadow-hover hover:-translate-y-1 transition-all text-center flex flex-col cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary relative text-inherit"
+                    to={`/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${product.id}/`}
+                    className="rounded-[14px] border border-line bg-surface overflow-hidden shadow-sm hover:shadow-hover hover:-translate-y-1 transition-all text-center flex flex-col cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary relative text-inherit no-underline"
                   >
                     {/* Corner Stamp */}
                     <div
@@ -234,8 +237,10 @@ const Products = () => {
                       {logoUrl ? (
                         <img
                           src={logoUrl}
-                          alt={companyName}
+                          alt={`${companyName} এর লোগো`}
                           loading="lazy"
+                          width="144"
+                          height="96"
                           className="max-h-20 sm:max-h-24 max-w-[80%] object-contain transition-transform group-hover:scale-105"
                         />
                       ) : (
@@ -254,7 +259,7 @@ const Products = () => {
                         বিস্তারিত দেখুন »
                       </span>
                     </div>
-                  </button>
+                  </Link>
                 );
               })}
             </div>

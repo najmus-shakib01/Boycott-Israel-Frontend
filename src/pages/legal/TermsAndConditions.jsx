@@ -6,8 +6,9 @@ const TermsAndConditions = () => {
   return (
     <div className="min-h-screen py-8 md:py-12">
       <PageTitle
-        title="ব্যবহারের শর্তাবলী — বয়কট ইসরায়েল"
-        description="বয়কট ইসরায়েল প্ল্যাটফর্ম ব্যবহারের নিয়মাবলী ও শর্তাবলী সম্পর্কে জানুন।"
+        title="ব্যবহারের শর্তাবলী"
+        description="বয়কট ইসরায়েল প্ল্যাটফর্ম ব্যবহারের নিয়মাবলী ও আইনি শর্তাবলী সম্পর্কে জানুন।"
+        canonicalPath="/terms-and-conditions"
       />
 
       <div className="max-w-[760px] mx-auto px-4 space-y-6">
