@@ -1,14 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axiosClient from "../../configs/axios.config";
+import { BoycottStamp } from "../../components/BoycottLogo";
 import Error from "../../components/Error";
 import Loader from "../../components/Loader";
 import Pagination from "../../components/Pagination";
+import axiosClient from "../../configs/axios.config";
 import PageTitle from "../../utils/PageTitle";
 import NoProductFound from "./NoProductFound";
+
+const toBengali = (num) =>
+  String(num).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[d]);
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,12 +22,10 @@ const Products = () => {
   );
 
   const navigate = useNavigate();
-
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
-
   const itemsPerPage = 20;
 
-  // Debounced URL sync
+  // Debounced URL synchronization
   useEffect(() => {
     const delay = setTimeout(() => {
       const params = new URLSearchParams();
@@ -37,7 +38,7 @@ const Products = () => {
     }, 400);
 
     return () => clearTimeout(delay);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, selectedCategory, currentPage]);
 
   const fetchProducts = useCallback(async () => {
@@ -60,6 +61,7 @@ const Products = () => {
     data: productsData = { results: [], count: 0 },
     isLoading: productsLoading,
     isError: productsError,
+    refetch: refetchProducts,
   } = useQuery({
     queryKey: ["products", selectedCategory, search, currentPage],
     queryFn: fetchProducts,
@@ -78,8 +80,8 @@ const Products = () => {
   const isError = productsError || categoriesError;
 
   const totalPages = useMemo(
-    () => Math.max(1, Math.ceil(productsData.count / itemsPerPage)),
-    [productsData.count]
+    () => Math.max(1, Math.ceil((productsData?.count || 0) / itemsPerPage)),
+    [productsData?.count]
   );
 
   const handleCategoryChange = (categoryName) => {
@@ -87,7 +89,6 @@ const Products = () => {
 
     if (categoryName !== "all") params.set("category", categoryName);
     if (search) params.set("search", search);
-
     params.set("page", "1");
 
     setSearchParams(params, { replace: true });
@@ -97,9 +98,7 @@ const Products = () => {
   const handlePageChange = (page) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", String(page));
-
     setSearchParams(params, { replace: true });
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -110,128 +109,157 @@ const Products = () => {
   };
 
   return (
-    <div className="pt-28 md:pt-32 lg:pt-36 pb-16 bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      <PageTitle title="ইসরায়েলের পণ্য" />
+    <div className="min-h-screen py-8 md:py-10">
+      <PageTitle title="ইসরায়েলের পণ্যসমূহ — বয়কট ইসরায়েল" />
 
-      <section className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 space-y-6">
-
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-          ইসরায়েলের পণ্যসমূহ
-        </h1>
-
-        <div className="relative max-w-md w-full">
-          <Search
-            size={20}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-          />
-
-          <input
-            type="text"
-            value={search}
-            placeholder="কোন পণ্য বা কোম্পানির নাম সার্চ করুন..."
-            onChange={(e) => setSearch(e.target.value)}
-            className="
-              w-full pl-10 pr-10 py-2.5 rounded-xl 
-              bg-white dark:bg-gray-800 
-              text-gray-800 dark:text-gray-200 
-              placeholder-gray-400 dark:placeholder-gray-500
-              border border-gray-200 dark:border-gray-700
-              shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent 
-              transition
-            "
-          />
-
-          {search && (
-            <button
-              onClick={() => setSearch("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-            >
-              <X size={18} />
-            </button>
-          )}
+      <section className="max-w-[1120px] mx-auto px-4 space-y-6">
+        {/* Header Title */}
+        <div className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-text">
+            ইসরায়েলের পণ্যসমূহ
+          </h1>
+          <p className="text-muted text-sm md:text-base">
+            নিচে তালিকাভুক্ত কোম্পানি ও পণ্যগুলো বয়কট আন্দোলনের অন্তর্ভুক্ত।
+          </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        {/* Search Bar */}
+        <div className="relative max-w-[520px] w-full">
+          <div className="flex items-center gap-2 bg-surface border border-line rounded-full px-4 py-1 shadow-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-tint transition-all">
+            <Search size={18} className="text-muted flex-none" aria-hidden="true" />
+            <input
+              type="search"
+              value={search}
+              placeholder="কোন পণ্য বা কোম্পানির নাম সার্চ করুন…"
+              aria-label="পণ্য সার্চ"
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-transparent border-0 text-text placeholder:text-muted min-h-[44px] focus:outline-none text-sm md:text-base font-sans"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                aria-label="সার্চ টেক্সট মুছুন"
+                className="p-1 rounded-full text-muted hover:text-text cursor-pointer transition-colors"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Category Chips (Horizontally Scrollable) */}
+        <div
+          role="group"
+          aria-label="ক্যাটাগরি ফিল্টার"
+          className="flex items-center gap-2 overflow-x-auto py-2 custom-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
+        >
           <button
             onClick={() => handleCategoryChange("all")}
-            className={`px-4 py-2 rounded-full text-sm shadow-sm border transition ${
+            aria-pressed={selectedCategory === "all"}
+            className={`flex-none min-h-[44px] px-5 rounded-full border text-sm font-medium transition-all cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               selectedCategory === "all"
-                ? "bg-emerald-600 text-white shadow-md"
-                : "bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-emerald-400 hover:text-emerald-500"
+                ? "bg-primary border-primary text-on-primary shadow-sm"
+                : "border-line bg-surface text-text hover:border-primary"
             }`}
           >
-            সব পণ্য ({productsData.count})
+            সব পণ্য {productsData?.count ? `(${toBengali(productsData.count)})` : ""}
           </button>
 
-          {categoriesData.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => handleCategoryChange(category.name)}
-              className={`px-4 py-2 rounded-full text-sm shadow-sm border transition ${
-                selectedCategory === category.name
-                  ? "bg-emerald-600 text-white shadow-md"
-                  : "bg-white text-gray-700 dark:bg-gray-800 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-emerald-400 hover:text-emerald-500"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
+          {categoriesData.map((category) => {
+            const isSelected = selectedCategory === category.name;
+            return (
+              <button
+                key={category.id || category.name}
+                onClick={() => handleCategoryChange(category.name)}
+                aria-pressed={isSelected}
+                className={`flex-none min-h-[44px] px-5 rounded-full border text-sm font-medium transition-all cursor-pointer whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  isSelected
+                    ? "bg-primary border-primary text-on-primary shadow-sm"
+                    : "border-line bg-surface text-text hover:border-primary"
+                }`}
+              >
+                {category.name}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          মোট পণ্য: {productsData.count} | দেখানো হচ্ছে:{" "}
-          {productsData.results.length}
+        {/* Count & Boycott Notice */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-muted pt-1 border-t border-line/60">
+          <p aria-live="polite">
+            মোট পণ্য: {toBengali(productsData?.count || 0)} | দেখানো হচ্ছে:{" "}
+            {toBengali(productsData?.results?.length || 0)}
+          </p>
+          <div className="flex items-center gap-2 text-xs md:text-sm">
+            <BoycottStamp className="w-5 h-5 flex-none" />
+            <span>এই চিহ্ন মানে পণ্যটি বয়কট তালিকাভুক্ত।</span>
+          </div>
         </div>
 
+        {/* Content States */}
         {isLoading ? (
-          <Loader />
+          <Loader variant="products" count={itemsPerPage} />
         ) : isError ? (
-          <Error />
-        ) : productsData.results.length === 0 ? (
+          <Error onRetry={refetchProducts} />
+        ) : !productsData?.results || productsData.results.length === 0 ? (
           <NoProductFound onResetFilters={handleResetFilters} />
         ) : (
           <>
-            {/* GRID */}
-            <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
-              {productsData.results.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
-                  className="bg-white dark:bg-gray-800 shadow-sm rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition overflow-hidden"
-                >
-                  <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-center h-28">
-                    {product?.company?.logo && (
-                      <img
-                        src={product.company.logo}
-                        alt={product.company?.name}
-                        className="w-36 h-24 object-contain"
-                        loading="lazy"
-                      />
-                    )}
-                  </div>
+            {/* Responsive Product Cards Grid */}
+            <div className="grid gap-4 md:gap-5 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {productsData.results.map((product) => {
+                const companyName = product.company?.name || "অজানা কোম্পানি";
+                const logoUrl = product.company?.logo;
 
-                  <div className="p-4 text-center">
-                    <h2 className="text-sm md:text-base font-bold text-gray-900 dark:text-gray-100 mb-2">
-                      {product.company?.name || "Unknown"}
-                    </h2>
-
-                    <button
-                      onClick={() =>
-                        navigate(
-                          `/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${product.id}/`
-                        )
-                      }
-                      className="text-emerald-600 dark:text-emerald-400 font-medium hover:underline"
+                return (
+                  <button
+                    key={product.id}
+                    onClick={() =>
+                      navigate(
+                        `/ইসরায়েলের-পন্যগুলোর-বিস্তারিত/${product.id}/`
+                      )
+                    }
+                    className="rounded-[14px] border border-line bg-surface overflow-hidden shadow-sm hover:shadow-hover hover:-translate-y-1 transition-all text-center flex flex-col cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary relative text-inherit"
+                  >
+                    {/* Corner Stamp */}
+                    <div
+                      className="absolute top-2.5 left-2.5 z-10"
+                      title="বয়কট পণ্য"
                     >
-                      বিস্তারিত দেখুন »
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
+                      <BoycottStamp className="w-6 h-6 shadow-sm" />
+                    </div>
+
+                    {/* Logo Box */}
+                    <div className="h-28 sm:h-32 w-full bg-primary-tint flex items-center justify-center p-3 relative overflow-hidden transition-colors">
+                      {logoUrl ? (
+                        <img
+                          src={logoUrl}
+                          alt={companyName}
+                          loading="lazy"
+                          className="max-h-20 sm:max-h-24 max-w-[80%] object-contain transition-transform group-hover:scale-105"
+                        />
+                      ) : (
+                        <span className="font-bold text-xl sm:text-2xl text-primary font-sans">
+                          {companyName}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="p-3 sm:p-4 flex flex-col justify-between flex-1 gap-2">
+                      <strong className="font-semibold text-text text-sm sm:text-base line-clamp-1 group-hover:text-primary transition-colors">
+                        {companyName}
+                      </strong>
+                      <span className="text-primary text-xs sm:text-sm font-medium">
+                        বিস্তারিত দেখুন »
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
+            {/* Pagination */}
             {totalPages > 1 && (
               <Pagination
                 totalItems={productsData.count}

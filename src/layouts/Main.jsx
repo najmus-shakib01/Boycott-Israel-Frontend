@@ -7,25 +7,27 @@ import Navbar from "../components/Navbar";
 const Main = () => {
   const { pathname } = useLocation();
 
-  // Scroll to top when route changes
+  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-bg text-text antialiased selection:bg-primary-tint selection:text-primary transition-colors">
       <Navbar />
-      <Suspense
-        fallback={
-          <div className="pt-28 md:pt-32 lg:pt-36 pb-16 max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-            <Loader />
-          </div>
-        }
-      >
-        <Outlet />
-      </Suspense>
+      <main id="main" className="flex-1 pb-16 lg:pb-8">
+        <Suspense
+          fallback={
+            <div className="max-w-[1120px] mx-auto px-4 py-8">
+              <Loader />
+            </div>
+          }
+        >
+          <Outlet />
+        </Suspense>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

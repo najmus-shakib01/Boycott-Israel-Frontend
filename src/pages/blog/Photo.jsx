@@ -1,21 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
+import { ImageOff, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
 import { useSearchParams } from "react-router-dom";
-import axiosClient from "../../configs/axios.config";
-import ErrorMessage from "../../components/Error";
-import LoadingSpinner from "../../components/Loader";
+import Error from "../../components/Error";
+import Loader from "../../components/Loader";
+import NoDataFound from "../../components/NoDataFound";
 import Pagination from "../../components/Pagination";
+import axiosClient from "../../configs/axios.config";
 import Time from "../../utils/formateData";
 
 const Photo = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [imgErrors, setImgErrors] = useState({});
+
   const [currentPage, setCurrentPage] = useState(() => {
     const urlPage = searchParams.get("page");
     return urlPage
-      ? parseInt(urlPage)
-      : parseInt(localStorage.getItem("photoPage") || "1");
+      ? parseInt(urlPage, 10)
+      : parseInt(localStorage.getItem("photoPage") || "1", 10);
   });
 
   const fetchBlobPhotos = useCallback(async () => {
@@ -27,6 +30,7 @@ const Photo = () => {
     data: photoData,
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["blob-photos", currentPage],
     queryFn: fetchBlobPhotos,
@@ -34,18 +38,22 @@ const Photo = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    localStorage.setItem("photoPage", page.toString());
+    try {
+      localStorage.setItem("photoPage", page.toString());
+    } catch {
+      /* ignore */
+    }
 
     const params = new URLSearchParams(searchParams);
     params.set("page", String(page));
     setSearchParams(params);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
     const pageFromUrl = searchParams.get("page");
     if (pageFromUrl) {
-      setCurrentPage(parseInt(pageFromUrl));
-      localStorage.setItem("photoPage", pageFromUrl);
+      setCurrentPage(parseInt(pageFromUrl, 10));
     }
   }, [searchParams]);
 
@@ -64,44 +72,61 @@ const Photo = () => {
     };
   }, [selectedPhoto]);
 
-  if (isLoading) return <LoadingSpinner />;
-  if (isError) return <ErrorMessage />;
+  if (isLoading) return <Loader variant="media" count={6} />;
+  if (isError) return <Error onRetry={refetch} />;
+  if (!photoData?.results || photoData.results.length === 0) {
+    return <NoDataFound title="কোনো ফটো পাওয়া যায়নি" />;
+  }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-        গাজার ফটো
-      </h2>
-
-      {/* PHOTO GRID */}
-      <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-        {photoData?.results?.map((photo) => (
-          <div
+      {/* Photo Grid */}
+      <div className="grid gap-4 md:gap-5 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {photoData.results.map((photo) => (
+          <article
             key={photo.id}
-            className="rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow hover:shadow-lg transition cursor-pointer"
             onClick={() => setSelectedPhoto(photo)}
+            className="rounded-[14px] border border-line bg-surface overflow-hidden shadow-sm hover:shadow-hover hover:-translate-y-1 transition-all cursor-pointer flex flex-col group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            tabIndex={0}
+            role="button"
+            aria-label={`ছবি দেখুন: ${photo.photoTitle}`}
           >
-            <img
-              src={photo.photo}
-              alt={photo.photoTitle}
-              className="w-full h-56 object-cover"
-              loading="lazy"
-            />
+            {/* Thumbnail */}
+            <div className="aspect-[16/10] w-full bg-slate-800 relative overflow-hidden flex items-center justify-center">
+              {imgErrors[photo.id] || !photo.photo ? (
+                <div className="flex flex-col items-center justify-center text-slate-400 gap-2 p-4 text-center">
+                  <ImageOff size={28} />
+                  <span className="text-xs">ছবি লোড করা যায়নি</span>
+                </div>
+              ) : (
+                <img
+                  src={photo.photo}
+                  alt={photo.photoTitle}
+                  loading="lazy"
+                  onError={() =>
+                    setImgErrors((prev) => ({ ...prev, [photo.id]: true }))
+                  }
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              )}
+            </div>
 
-            <div className="p-4">
-              <p className="text-gray-700 dark:text-gray-300 text-justify">
+            {/* Card Content */}
+            <div className="p-4 flex flex-col justify-between flex-1 gap-2">
+              <p className="text-text font-medium text-sm md:text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                 {photo.photoTitle}
               </p>
-
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-                যোগের তারিখ: {Time(photo.created_at)}
-              </p>
+              {photo.created_at && (
+                <small className="text-muted text-xs block">
+                  যোগের তারিখ: {Time(photo.created_at)}
+                </small>
+              )}
             </div>
-          </div>
+          </article>
         ))}
       </div>
 
-      {/* PAGINATION */}
+      {/* Pagination */}
       <Pagination
         totalItems={photoData?.count || 0}
         itemsPerPage={20}
@@ -109,27 +134,45 @@ const Photo = () => {
         onPageChange={handlePageChange}
       />
 
-      {/* MODAL */}
+      {/* Lightbox Modal */}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          onClick={(e) =>
-            e.target === e.currentTarget && setSelectedPhoto(null)
-          }
+          role="dialog"
+          aria-modal="true"
+          aria-label={selectedPhoto.photoTitle}
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedPhoto(null);
+          }}
         >
-          <div className="relative max-w-4xl w-full">
+          <div className="relative max-w-4xl w-full bg-surface border border-line rounded-[22px] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            {/* Close Button */}
             <button
-              className="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition"
               onClick={() => setSelectedPhoto(null)}
+              aria-label="বন্ধ করুন"
+              className="absolute top-3 right-3 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-all cursor-pointer"
             >
-              <FaTimes />
+              <X size={20} />
             </button>
 
-            <img
-              src={selectedPhoto.photo}
-              alt={selectedPhoto.photoTitle}
-              className="w-full max-h-[80vh] object-contain rounded-xl shadow-lg"
-            />
+            <div className="flex-1 overflow-auto bg-black flex items-center justify-center max-h-[70vh]">
+              <img
+                src={selectedPhoto.photo}
+                alt={selectedPhoto.photoTitle}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+
+            <div className="p-4 sm:p-5 bg-surface border-t border-line">
+              <h3 className="font-semibold text-text text-base sm:text-lg">
+                {selectedPhoto.photoTitle}
+              </h3>
+              {selectedPhoto.created_at && (
+                <p className="text-xs text-muted mt-1">
+                  যোগের তারিখ: {Time(selectedPhoto.created_at)}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       )}

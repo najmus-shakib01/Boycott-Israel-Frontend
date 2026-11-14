@@ -1,171 +1,134 @@
-import { Home, ImagePlay, Menu, Moon, ShoppingCart, Star, Sun, X } from "lucide-react";
+import { Home, Image as ImageIcon, MessageSquare, Moon, ShoppingCart, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import NavLogo from "/logo.png";
+import { BoycottLockup } from "./BoycottLogo";
+
+const navItems = [
+  { label: "বয়কট-ইসরায়েল", shortLabel: "হোম", path: "/", icon: Home, end: true },
+  { label: "ইসরায়েলের-পণ্যগুলো", shortLabel: "পণ্য", path: "/ইসরায়েলের-পন্যগুলো", icon: ShoppingCart },
+  { label: "ব্লগ-ছবি-ও-ভিডিও", shortLabel: "ছবি-ভিডিও", path: "/ব্লগ-ছবি-ও-ভিডিও", icon: ImageIcon },
+  { label: "আপনার-মতামত", shortLabel: "মতামত", path: "/আপনার-মতামত", icon: MessageSquare },
+];
 
 const Navbar = () => {
   const [darkMode, setDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    return (
-      savedTheme === "dark" ||
-      (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
-    );
+    try {
+      const saved = localStorage.getItem("theme");
+      if (saved) return saved === "dark";
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    } catch {
+      return false;
+    }
   });
 
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add("dark");
+      root.setAttribute("data-theme", "dark");
+      try {
+        localStorage.setItem("theme", "dark");
+      } catch {
+        /* ignore */
+      }
+    } else {
+      root.classList.remove("dark");
+      root.setAttribute("data-theme", "light");
+      try {
+        localStorage.setItem("theme", "light");
+      } catch {
+        /* ignore */
+      }
+    }
   }, [darkMode]);
 
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileOpen]);
-
-  // ESC key to close mobile menu
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape") setMobileOpen(false);
-    };
-    if (mobileOpen) {
-      document.addEventListener("keydown", handleEsc);
-    }
-    return () => document.removeEventListener("keydown", handleEsc);
-  }, [mobileOpen]);
-
-  const toggleDarkMode = () => setDarkMode(!darkMode);
-
-  const navItems = [
-    { label: "বয়কট-ইসরায়েল", path: "/", icon: Home },
-    { label: "ইসরায়েলের-পন্যগুলো", path: "/ইসরায়েলের-পন্যগুলো", icon: ShoppingCart },
-    { label: "ব্লগ-ছবি-ও-ভিডিও", path: "/ব্লগ-ছবি-ও-ভিডিও", icon: ImagePlay },
-    { label: "আপনার-মতামত", path: "/আপনার-মতামত", icon: Star },
-  ];
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-white dark:bg-gray-800 shadow-md transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-5">
-        <div className="flex items-center justify-between">
+    <>
+      {/* Sticky Top Header */}
+      <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-line pt-[env(safe-area-inset-top,0px)] transition-colors">
+        <div className="max-w-[1120px] mx-auto px-4 h-[68px] flex items-center justify-between gap-4">
+          {/* Brand Logo Lockup */}
+          <div className="flex-none">
+            <BoycottLockup to="/" />
+          </div>
 
-          {/* Logo */}
-          <NavLink to="/" className="flex items-center gap-2">
-            <img
-              src={NavLogo}
-              alt="Logo"
-              className="w-10 h-10 md:w-16 md:h-16 rounded-full shadow border border-gray-300 dark:border-gray-700"
-            />
-          </NavLink>
-
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center gap-6">
+          {/* Desktop Navigation (>=1024px) */}
+          <nav className="hidden lg:flex items-center gap-1 mx-auto" aria-label="প্রধান মেনু">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === "/"}
+                end={item.end}
                 className={({ isActive }) =>
-                  `flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition
-                  ${
+                  `inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-full font-medium text-[0.95rem] transition-all ${
                     isActive
-                      ? "bg-emerald-600 text-white shadow"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      ? "bg-primary text-on-primary shadow-sm"
+                      : "text-muted hover:bg-primary-tint hover:text-primary"
                   }`
                 }
               >
-                <item.icon size={18} />
-                {item.label}
+                {({ isActive }) => (
+                  <>
+                    <item.icon size={18} strokeWidth={isActive ? 2.4 : 2} aria-hidden="true" />
+                    <span>{item.label}</span>
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
 
-          {/* Dark Mode + Hamburger */}
-          <div className="flex items-center gap-3">
-
-            {/* Dark Mode Toggle */}
+          {/* Dark / Light Mode Toggle */}
+          <div className="flex items-center">
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full bg-emerald-600 dark:bg-emerald-400 text-white dark:text-black transition-transform hover:scale-105"
-              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              className="w-11 h-11 rounded-full border border-line bg-surface text-text hover:bg-primary-tint hover:text-primary grid place-items-center cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label={darkMode ? "লাইট মোড চালু করুন" : "ডার্ক মোড চালু করুন"}
+              title={darkMode ? "লাইট মোড" : "ডার্ক মোড"}
             >
-              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="md:hidden p-2 rounded-lg bg-gray-200 dark:bg-gray-700"
-              aria-label="Open menu"
-            >
-              <Menu size={22} className="text-gray-800 dark:text-gray-200" />
+              {darkMode ? (
+                <Sun size={20} className="text-yellow-400" />
+              ) : (
+                <Moon size={20} />
+              )}
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Right Drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setMobileOpen(false)}>
-          <div
-            className="absolute right-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-xl p-5 flex flex-col gap-6 transform transition-all"
-            onClick={(e) => e.stopPropagation()}
+      {/* Mobile & Tablet Bottom Navigation (<1024px) */}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-30 lg:hidden grid grid-cols-4 bg-surface/95 backdrop-blur-md border-t border-line px-2 pt-1 pb-[calc(4px+env(safe-area-inset-bottom,0px))] shadow-lg transition-colors"
+        aria-label="মোবাইল মেনু"
+      >
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.end}
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center gap-1 min-h-[48px] py-1 text-center rounded-lg transition-colors ${
+                isActive
+                  ? "text-primary font-semibold"
+                  : "text-muted hover:text-primary"
+              }`
+            }
           >
-            {/* Close Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={() => setMobileOpen(false)}
-                className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700"
-                aria-label="Close menu"
-              >
-                <X size={22} className="text-gray-800 dark:text-gray-200" />
-              </button>
-            </div>
-
-            {/* Drawer Menu Items */}
-            <nav className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.path === "/"}
-                  onClick={() => setMobileOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-lg text-base transition
-                    ${
-                      isActive
-                        ? "bg-emerald-600 text-white shadow"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    }`
-                  }
-                >
-                  <item.icon size={20} />
-                  {item.label}
-                </NavLink>
-              ))}
-            </nav>
-
-            {/* Dark Mode Switch Inside Drawer */}
-            <div className="mt-auto pt-4 border-t border-gray-300 dark:border-gray-700">
-              <button
-                onClick={toggleDarkMode}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 dark:bg-emerald-400 text-white dark:text-black py-3 rounded-lg transition-transform hover:scale-[1.02]"
-              >
-                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                {darkMode ? "লাইট মোড" : "ডার্ক মোড"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </header>
+            {({ isActive }) => (
+              <>
+                <item.icon
+                  size={20}
+                  strokeWidth={isActive ? 2.5 : 1.8}
+                  aria-hidden="true"
+                />
+                <span className="text-[0.75rem] leading-none">{item.shortLabel}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+    </>
   );
 };
 

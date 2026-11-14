@@ -1,77 +1,150 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Noto Sans Bengali', sans-serif;
-  @apply bg-[whitesmoke] dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300;
+:root {
+  --primary: #0E6B4D;
+  --primary-d: #0A3F31;
+  --primary-t: #E3F3EC;
+  --accent: #D6303D;
+  --bg: #F6F8F7;
+  --surface: #FFFFFF;
+  --text: #14201B;
+  --muted: #52615A;
+  --line: #DDE5E1;
+  --on-primary: #FFFFFF;
+  --font: "Hind Siliguri", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 72px;
+  --r-sm: 8px;
+  --r: 14px;
+  --r-lg: 22px;
+  --sh: 0 1px 2px rgba(10, 63, 49, 0.06), 0 4px 14px rgba(10, 63, 49, 0.06);
+  --sh-h: 0 2px 4px rgba(10, 63, 49, 0.08), 0 12px 28px rgba(10, 63, 49, 0.12);
+  --t: 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.light) {
+    --primary: #34C28E;
+    --primary-d: #0A2A21;
+    --primary-t: #123A2D;
+    --accent: #FF6B76;
+    --bg: #0C1411;
+    --surface: #142019;
+    --text: #EAF2EE;
+    --muted: #9DB0A7;
+    --line: #243A30;
+    --on-primary: #06231A;
+  }
+}
+
+:root[data-theme="dark"],
+.dark {
+  --primary: #34C28E;
+  --primary-d: #0A2A21;
+  --primary-t: #123A2D;
+  --accent: #FF6B76;
+  --bg: #0C1411;
+  --surface: #142019;
+  --text: #EAF2EE;
+  --muted: #9DB0A7;
+  --line: #243A30;
+  --on-primary: #06231A;
 }
 
 html {
+  scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 80px);
   scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
-/* Selection color */
-::selection {
-  @apply bg-emerald-500/30 text-emerald-900 dark:text-emerald-100;
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--t), color var(--t);
 }
 
-/* Shimmer animation for skeleton loaders */
-@keyframes shimmer {
-  0% {
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Shimmer Animation */
+@keyframes sh {
+  to {
     background-position: -200% 0;
   }
-  100% {
-    background-position: 200% 0;
-  }
 }
 
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 25%,
-    rgba(255, 255, 255, 0.15) 50%,
-    transparent 75%
-  );
+.sk {
+  background: linear-gradient(100deg, var(--line) 30%, var(--primary-t) 50%, var(--line) 70%);
   background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
+  animation: sh 1.1s infinite;
 }
 
-.dark .shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 25%,
-    rgba(255, 255, 255, 0.06) 50%,
-    transparent 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
+/* Selection Color */
+::selection {
+  background: var(--primary-t);
+  color: var(--primary);
 }
 
-/* Custom scrollbar for PalestineHistory and similar sections */
+/* Custom Scrollbars */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-800 rounded-full;
+  background: var(--bg);
+  border-radius: 999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  background: var(--line);
+  border-radius: 999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
+  background: var(--muted);
 }
 
-/* Firefox scrollbar */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #d1d5db #f3f4f6;
+  scrollbar-color: var(--line) var(--bg);
 }
 
-.dark .custom-scrollbar {
-  scrollbar-color: #4b5563 #1f2937;
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .sk {
+    animation: none !important;
+    background: var(--line) !important;
+  }
 }

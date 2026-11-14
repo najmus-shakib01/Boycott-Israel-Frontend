@@ -15,59 +15,75 @@ const Blog = () => {
     initialData: searchParams.get("tab") || "photos",
   });
 
-  const setActiveTab = useCallback((tab) => {
-    queryClient.setQueryData(["activeTab"], tab);
+  const setActiveTab = useCallback(
+    (tab) => {
+      queryClient.setQueryData(["activeTab"], tab);
+      const params = new URLSearchParams();
+      params.set("tab", tab);
+      setSearchParams(params, { replace: true });
+    },
+    [queryClient, setSearchParams]
+  );
 
-    const params = new URLSearchParams();
-    params.set("tab", tab);
-    setSearchParams(params, { replace: true });
-  }, [queryClient, setSearchParams]);
-
-  // Only sync on initial mount, not on every searchParams change
   if (isInitialMount.current) {
     isInitialMount.current = false;
   }
 
-  return (
-    <div className="pt-28 md:pt-32 lg:pt-36 pb-16 min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950">
-      <PageTitle title="গাজার ফটো এবং ভিডিও" />
+  const isPhotos = activeTab !== "videos";
 
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* TABS */}
-        <div className="flex justify-center mb-10">
-          <div className="inline-flex bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+  return (
+    <div className="min-h-screen py-8 md:py-10">
+      <PageTitle title="গাজার ফটো এবং ভিডিও — বয়কট ইসরায়েল" />
+
+      <section className="max-w-[1120px] mx-auto px-4 space-y-6">
+        {/* Segmented Tab Pill Control */}
+        <div className="flex justify-center">
+          <div
+            role="tablist"
+            aria-label="মিডিয়া ক্যাটাগরি"
+            className="inline-flex items-center bg-surface border border-line rounded-full p-1 shadow-sm"
+          >
             <button
+              role="tab"
+              id="tab-photos"
+              aria-selected={isPhotos}
+              aria-controls="panel-photos"
               onClick={() => setActiveTab("photos")}
-              className={`
-                px-6 py-2 text-sm font-medium transition
-                ${
-                  activeTab === "photos"
-                    ? "bg-emerald-600 text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                }
-              `}
+              className={`min-h-[44px] px-6 sm:px-8 rounded-full font-semibold text-sm sm:text-base transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                isPhotos
+                  ? "bg-primary text-on-primary shadow-sm"
+                  : "text-muted hover:text-text bg-transparent"
+              }`}
             >
               ফটো
             </button>
 
             <button
+              role="tab"
+              id="tab-videos"
+              aria-selected={!isPhotos}
+              aria-controls="panel-videos"
               onClick={() => setActiveTab("videos")}
-              className={`
-                px-6 py-2 text-sm font-medium transition
-                ${
-                  activeTab === "videos"
-                    ? "bg-emerald-600 text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                }
-              `}
+              className={`min-h-[44px] px-6 sm:px-8 rounded-full font-semibold text-sm sm:text-base transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                !isPhotos
+                  ? "bg-primary text-on-primary shadow-sm"
+                  : "text-muted hover:text-text bg-transparent"
+              }`}
             >
               ভিডিও
             </button>
           </div>
         </div>
 
-        {activeTab === "photos" && <Photo />}
-        {activeTab === "videos" && <Video />}
+        {/* Section Heading */}
+        <h2 className="text-2xl sm:text-3xl font-bold text-text text-center sm:text-left">
+          {isPhotos ? "গাজার ফটো" : "গাজার ভিডিও"}
+        </h2>
+
+        {/* Tab Panels */}
+        <div id="panel-media" role="tabpanel">
+          {isPhotos ? <Photo /> : <Video />}
+        </div>
       </section>
     </div>
   );

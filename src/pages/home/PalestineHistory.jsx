@@ -67,38 +67,42 @@ const PalestineHistory = () => {
   };
 
   return (
-    <section className="space-y-4">
-      <div className="text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+    <section className="space-y-4 pt-4">
+      <div>
+        <h2 className="text-2xl md:text-3xl font-bold text-text">
           ফিলিস্তিনের সংক্ষিপ্ত ইতিহাস
         </h2>
-        <p className="text-sm md:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          কুদস, মসজিদে আকসা ও ফিলিস্তিন ভূমির ইতিহাস বুঝলে আজকের অন্যায় দখলের
-          প্রেক্ষাপটও স্পষ্ট হয়।
+        <p className="text-muted text-sm md:text-base mt-2 max-w-[65ch]">
+          কুদস, মসজিদে আকসা ও ফিলিস্তিন ভূমির ইতিহাস বুঝলে আজকের অন্যায় দখলের
+          প্রেক্ষাপটও স্পষ্ট হয়।
         </p>
       </div>
 
-      <div className="bg-white/90 dark:bg-gray-900/80 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 md:p-6 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-          <div>
-            <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {article.title}
-            </h3>
-            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">
-              {article.author}
-            </p>
-          </div>
+      <article className="rounded-[14px] border border-line bg-surface p-5 md:p-8 shadow-sm">
+        <div className="border-b border-line pb-4 mb-4">
+          <h3 className="text-xl md:text-2xl font-bold text-text">
+            {article.title}
+          </h3>
+          <p className="text-xs md:text-sm text-muted mt-1 font-medium">
+            {article.author}
+          </p>
         </div>
 
-        <div className="max-h-[420px] md:max-h-[480px] overflow-y-auto pr-1 custom-scrollbar text-sm md:text-base leading-relaxed text-gray-700 dark:text-gray-200 whitespace-pre-line text-justify">
+        {/* Scrollable story container */}
+        <div
+          tabIndex={0}
+          aria-label="ইতিহাস, স্ক্রল করুন"
+          className="max-h-[360px] md:max-h-[440px] overflow-y-auto pr-3 custom-scrollbar text-sm md:text-base leading-[1.85] text-muted whitespace-pre-line text-justify focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+        >
           {article.body}
         </div>
 
-        <div className="mt-4 text-xs md:text-sm text-gray-500 dark:text-gray-400 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        {/* Story Footer / Attribution */}
+        <div className="mt-5 pt-4 border-t border-line text-xs md:text-sm text-muted flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 font-medium">
           <span>{article.footer.authorTitle}</span>
           <span>{article.footer.institution}</span>
         </div>
-      </div>
+      </article>
     </section>
   );
 };

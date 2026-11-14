@@ -1,5 +1,8 @@
 import PropTypes from "prop-types";
 
+const toBengaliNumber = (num) =>
+  String(num).replace(/\d/g, (digit) => "০১২৩৪৫৬৭৮৯"[digit]);
+
 const Pagination = ({
   totalItems,
   itemsPerPage = 20,
@@ -16,31 +19,26 @@ const Pagination = ({
 
   const getVisiblePages = () => {
     const pages = [];
-    const delta = 2; // pages to show around current
+    const delta = 2;
 
     // Always show page 1
     pages.push(1);
 
-    // Calculate range around current page
     const rangeStart = Math.max(2, currentPage - delta);
     const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
 
-    // Add dots before range if needed
     if (rangeStart > 2) {
       pages.push("dots-start");
     }
 
-    // Add range pages
     for (let i = rangeStart; i <= rangeEnd; i++) {
       pages.push(i);
     }
 
-    // Add dots after range if needed
     if (rangeEnd < totalPages - 1) {
       pages.push("dots-end");
     }
 
-    // Always show last page (if more than 1 page)
     if (totalPages > 1) {
       pages.push(totalPages);
     }
@@ -51,64 +49,66 @@ const Pagination = ({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="flex justify-center items-center mt-10 gap-1.5 text-sm">
+    <nav
+      className="flex justify-center items-center gap-2 mt-8 flex-wrap"
+      aria-label="পেজিনেশন নেভিগেশন"
+    >
+      {/* Previous Button */}
       <button
         onClick={() => handleChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-2 rounded-lg border text-xs transition
-          ${
-            currentPage === 1
-              ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-              : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400"
-          }`}
+        aria-label="আগের পেজ"
+        className="min-w-[44px] min-h-[44px] px-3 rounded-lg border border-line bg-surface text-text font-medium text-sm transition-all hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-line disabled:hover:text-text disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         ←
       </button>
 
-      <div className="flex items-center gap-1">
+      {/* Page Numbers */}
+      <div className="flex items-center gap-1.5 flex-wrap">
         {visiblePages.map((item, index) => {
           if (typeof item === "string" && item.startsWith("dots")) {
             return (
               <span
                 key={`${item}-${index}`}
-                className="w-9 h-9 flex items-center justify-center text-xs text-gray-400"
+                aria-hidden="true"
+                className="w-10 h-10 flex items-center justify-center text-muted font-medium select-none"
               >
                 ...
               </span>
             );
           }
 
-          const page = item;
+          const pageNum = Number(item);
+          const isCurrent = currentPage === pageNum;
+
           return (
             <button
-              key={page}
-              onClick={() => handleChange(page)}
-              className={`w-9 h-9 rounded-lg text-xs border transition
-                ${
-                  currentPage === page
-                    ? "bg-emerald-500 border-emerald-500 text-white shadow-sm"
-                    : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400"
-                }`}
+              key={pageNum}
+              onClick={() => handleChange(pageNum)}
+              aria-label={`পেজ ${toBengaliNumber(pageNum)}`}
+              aria-current={isCurrent ? "true" : undefined}
+              className={`min-w-[44px] min-h-[44px] px-3 rounded-lg border font-medium text-sm transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                isCurrent
+                  ? "bg-primary border-primary text-on-primary shadow-sm"
+                  : "border-line bg-surface text-text hover:border-primary hover:text-primary"
+              }`}
             >
-              {page}
+              {toBengaliNumber(pageNum)}
             </button>
           );
         })}
       </div>
 
+      {/* Next Button */}
       <button
         onClick={() => handleChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-2 rounded-lg border text-xs transition
-          ${
-            currentPage === totalPages
-              ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
-              : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:border-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-400"
-          }`}
+        aria-label="পরের পেজ"
+        className="min-w-[44px] min-h-[44px] px-3 rounded-lg border border-line bg-surface text-text font-medium text-sm transition-all hover:border-primary hover:text-primary disabled:opacity-40 disabled:hover:border-line disabled:hover:text-text disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         →
       </button>
-    </div>
+    </nav>
   );
 };
 
